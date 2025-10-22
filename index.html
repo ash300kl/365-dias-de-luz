@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#ffecd2">
+    <meta name="theme-color" content="#ffecd2" id="themeColor">
     <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="365 Días de Luz">
     <title>365 Días de Luz</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,6 +21,98 @@
             align-items: center;
             padding: 20px;
             transition: background 1s ease;
+        }
+        
+        /* Modo nocturno (después de las 8pm o antes de las 6am) */
+        body.night-mode {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        
+        body.night-mode .container {
+            background: linear-gradient(to bottom, #34495e 0%, #2c3e50 100%);
+            color: #ecf0f1;
+        }
+        
+        body.night-mode h1,
+        body.night-mode .day-number,
+        body.night-mode .date-display,
+        body.night-mode .subtitle {
+            color: #f39c12 !important;
+        }
+        
+        body.night-mode .message-box {
+            background: #2c3e50;
+            border-color: #34495e;
+            border-left-color: #f39c12;
+        }
+        
+        body.night-mode .message-text {
+            color: #ecf0f1;
+        }
+        
+        body.night-mode .reflection-box {
+            background: rgba(52, 73, 94, 0.7);
+            border-color: #f39c12;
+        }
+        
+        body.night-mode .reflection-box textarea {
+            background: #34495e;
+            color: #ecf0f1;
+            border-color: #2c3e50;
+        }
+        
+        body.night-mode .user-greeting {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: #f39c12;
+            border-color: #2c3e50;
+        }
+        
+        /* Modo lluvia */
+        body.rainy-mode {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body.rainy-mode .container {
+            background: linear-gradient(to bottom, #e8eaf6 0%, #c5cae9 100%);
+        }
+        
+        body.rainy-mode .message-box {
+            border-left-color: #5c6bc0;
+            border-color: #c5cae9;
+        }
+        
+        /* Animación de lluvia */
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .raindrop {
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom, transparent, rgba(174, 194, 224, 0.5));
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+        /* Indicador de clima */
+        .weather-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            animation: float 3s ease-in-out infinite;
         }
         
         body.month-0 { background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); }
@@ -479,6 +574,9 @@
     </style>
 </head>
 <body>
+    <div class="weather-indicator" id="weatherIcon">☀️</div>
+    <div class="rain" id="rainContainer"></div>
+    
     <div class="container">
         <div id="loginScreen">
             <div class="login-emoji">✨</div>
@@ -534,6 +632,9 @@
     </div>
 
     <script>
+
+        const WEATHER_API_KEY = '6f66e2afe270d596638eba65b13ceafe';
+        
         const phrases = ["Confía en ti, lo estás haciendo mejor de lo que crees.|💪","Tu sonrisa tiene poder, úsala hoy.|😊","No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖","Eres suficiente, incluso en tus días más simples.|✨","Hoy es un buen día para empezar de nuevo.|🌅","Cada paso pequeño cuenta, no lo olvides.|👣","La calma también es progreso.|🌊","Tienes un brillo que nadie puede copiar.|⭐","Lo que haces con amor siempre deja huella.|💝","Respira, vas bien.|🌬️","No corras, las flores no florecen de prisa.|🌸","Mereces todo lo bonito que estás buscando.|🌺","Lo que das, vuelve.|🔄","Eres más fuerte de lo que piensas.|💪","Tu energía cambia los lugares donde vas.|✨","Hoy elige verte con cariño.|💕","Lo estás intentando, y eso ya vale mucho.|🌟","No necesitas validación para ser valiosa.|👑","A veces descansar también es avanzar.|🛏️","Cada día puedes reinventarte un poco.|🦋","Eres luz, aunque no todos lo noten.|💡","No te compares, tu historia es única.|📖","Los días buenos llegan, ten paciencia.|⏳","Agradece lo que tienes, y verás más motivos para sonreír.|🙏","Hoy, elige la paz antes que la prisa.|☮️","Tu voz importa, úsala con amor.|🗣️","Has superado tanto, no lo olvides.|🏔️","Lo mejor aún no ha llegado.|🎁","No necesitas ser más, solo ser tú.|🌈","A veces el alma solo necesita un respiro.|🌬️","Las cosas buenas toman tiempo.|⏰","Tu presencia ya es un regalo.|🎀","Hoy elige ser amable contigo misma.|💗","No te castigues por sentir.|💙","Lo que hoy te pesa, mañana puede enseñarte.|📚","Sigue adelante, incluso si es despacio.|🐢","Cada error te ha acercado a algo valioso.|💎","No apagues tu luz por miedo a brillar.|💫","Tienes tanto por dar.|🎁","No necesitas tener todo claro para avanzar.|🧭","Permítete disfrutar, sin culpa.|🌻","Tu corazón sabe más de lo que imaginas.|❤️","Sonríe, hoy puede ser un buen comienzo.|😊","Las cosas cambian, y tú también puedes hacerlo.|🔄","No subestimes lo lejos que has llegado.|🗺️","Tu bondad es una fuerza.|🌟","No todo tiene que tener sentido ahora.|🌙","Hoy también cuenta, incluso si fue tranquilo.|🍃","Haz espacio para lo que te hace bien.|🏡","Lo simple también puede ser hermoso.|🌿","Confía en el proceso.|🔮","Tienes permiso para descansar.|😴","Hoy puedes elegir ver lo bueno.|👀","No te apures, el sol también tarda en salir.|🌅","Eres capaz, incluso cuando dudas.|💪","No hay prisa para florecer.|🌷","Cada día trae una nueva oportunidad.|🌄","Estás haciendo lo mejor que puedes.|🌟","No necesitas demostrar nada, ya vales.|👑","A veces, solo necesitas respirar profundo.|🌬️","La ternura también es fortaleza.|🌸","Has crecido más de lo que notas.|🌱","Hoy es un buen día para agradecer.|🙏","No te rindas por cansancio, descansa.|😌","Eres parte de algo bonito.|🌺","Aunque no lo veas, estás avanzando.|🚶","Tu forma de cuidar también cuenta.|💞","No temas empezar de cero, ahí nace la fuerza.|🔥","Mereces calma.|🕊️","Tienes un corazón valiente.|💖","Hoy, date crédito por todo lo que lograste.|🏆","No necesitas ser productiva para tener valor.|✨","Eres suficiente, incluso en silencio.|🤫","A veces, la esperanza llega despacio.|🌤️","Tienes derecho a elegir tu propio ritmo.|🎵","La bondad siempre vuelve.|🔄","No todo lo bonito se ve, algunas cosas se sienten.|💫","No estás sola, el mundo también te sostiene.|🌍","Las pequeñas victorias importan.|🎉","Lo que sueñas no es imposible.|🌠","Cree en ti, aunque sea un poquito más.|⭐","Eres más capaz de lo que imaginas.|💪","Hoy, elige no exigirte tanto.|🌼","Agradece tus pasos, incluso los torpes.|👣","Estás aprendiendo, no fallando.|📚","La vida también se disfruta lento.|🐌","No necesitas tener todas las respuestas.|❓","Tu manera de ser ya es hermosa.|🌹","Hoy, suelta lo que no puedas controlar.|🎈","Las cosas buenas también te merecen a ti.|💝","No te olvides de celebrar tus avances.|🎊","El tiempo no cura todo, pero enseña.|⏳","Hoy, si puedes, sonríe un poco más.|😊","Eres un trabajo en progreso, y eso está bien.|🔧","Tu ternura cambia el mundo.|🌎","Nadie más puede ser tú, y eso es tu magia.|✨","Hoy también mereces amor.|❤️","Lo que te hace diferente, te hace brillar.|💎","No todo se mide en resultados.|📊","Permítete sentir orgullo de ti.|🦁","Estás creciendo incluso sin darte cuenta.|🌳","La calma llega cuando confías.|🌊","No apagues tu entusiasmo.|🔥","Tus pasos son valientes, aunque sean pequeños.|👣","Hoy puedes empezar otra vez.|🌅","Eres parte de algo más grande.|🌌","No te sientas mal por necesitar tiempo.|⏰","Cada día te acerca a tu mejor versión.|🦋","Tus sueños también merecen espacio.|💭","Eres un ser de luz, aunque no siempre brilles igual.|💡","No tienes que tenerlo todo bajo control.|🎮","Tienes derecho a descansar sin culpa.|🛌","Tu esfuerzo tiene valor.|🏅","Hoy, elige ser paciente contigo.|⏳","Todo lo que siembras desde el amor florece.|🌻","Eres valiente por seguir intentando.|🦸","Lo importante no es la velocidad, sino el rumbo.|🧭","Eres más constante de lo que crees.|⛰️","A veces rendirse al descanso también es sabio.|😌","No necesitas validación para sentirte bien.|💫","Tu paz vale más que la aprobación.|☮️","Estás aprendiendo a quererte, y eso es hermoso.|💗","La magia está en las cosas pequeñas.|✨","Hoy, agradece lo simple.|🍂","Eres resiliente, aunque no lo notes.|💪","No te olvides de mirar al cielo.|☁️","Lo estás haciendo bien, de verdad.|👍","La felicidad no se busca, se cultiva.|🌱","Hoy, confía un poco más en la vida.|🌈","Eres luz incluso en los días nublados.|🌥️","Tu ternura es un regalo.|🎁","Cada día cuenta, incluso los lentos.|📆","No necesitas ser fuerte todo el tiempo.|🛡️","El descanso también es parte del camino.|🚶","Eres importante, aunque no te lo digan.|⭐","Hoy, elige soltar el peso que no te pertenece.|🎈","Lo que das con amor, vuelve multiplicado.|💕","Estás aprendiendo a vivir, no a rendirte.|🌟","Tu forma de amar hace la diferencia.|💖","Hoy, cree en la posibilidad de cosas buenas.|🌠","Eres más valiente de lo que imaginas.|🦁","No necesitas correr, vas bien.|🚶","La esperanza siempre encuentra el camino.|🌅","No tienes que tener un plan perfecto.|📝","Estás exactamente donde debes estar.|📍","La vida también es esto: intentarlo.|🎯","No te juzgues por tus pausas.|⏸️","Eres un corazón que sigue latiendo, y eso ya es mucho.|💓","Hoy, elige calma en lugar de miedo.|🕊️","Lo que hoy te cuesta, mañana te fortalecerá.|💪","No te rindas, el cambio tarda pero llega.|🌱","Tienes tanto amor dentro, compártelo contigo también.|💝","Estás floreciendo, incluso si no lo notas.|🌺","Hoy, confía en tu camino.|🛤️","Tu existencia ya es suficiente.|✨","No necesitas ser más, solo ser auténtica.|🌟","Eres una historia hermosa en proceso.|📖","A veces lo mejor es simplemente seguir.|➡️","Hoy, abrázate con paciencia.|🤗","Lo estás haciendo bien, aunque no lo veas.|👀","Cada día es una oportunidad para renacer.|🌄","Eres capaz, incluso cuando lo dudas.|💪","Hoy, sonríe aunque no haya motivo.|😊","No te olvides de cuidar tu energía.|⚡","La bondad siempre deja huella.|👣","Eres motivo de inspiración.|💫","Lo que hoy siembras, mañana florece.|🌷","Estás aprendiendo a brillar sin miedo.|✨","No subestimes tu crecimiento.|📈","Hoy, respira y sigue.|🌬️","Eres más fuerte de lo que sientes hoy.|💪","El universo no se ha olvidado de ti.|🌌","Lo estás logrando, poco a poco.|🎯","Hoy, elige la paz por encima del ruido.|🔇","Eres una persona increíble.|🌟","Todo tiene su momento, confía.|⏰","No te castigues por los tropiezos.|🩹","Eres arte, aunque no siempre te veas así.|🎨","Hoy, permite que la vida te sorprenda.|🎁","Eres parte de algo luminoso.|✨","No pierdas la fe en lo que sueñas.|💭","Tu luz guía más de lo que imaginas.|🔦","Hoy, haz algo que te haga bien.|💚","Eres valiosa sin tener que demostrarlo.|💎","Lo que hoy te duele, te está transformando.|🦋","Mereces días suaves.|☁️","Hoy, deja que tu alma respire.|🌬️","Eres suficiente, tal como estás.|✨","No necesitas más, ya tienes lo esencial.|💝","Hoy, date tiempo.|⏳","Estás aprendiendo a quererte con calma.|💗","La ternura también es un acto de fuerza.|🌸","No te compares, tu ritmo es perfecto.|🎵","Eres luz, incluso cuando brillas poquito.|💡","Hoy, agradece lo que sí tienes.|🙏","Tu esencia es hermosa.|🌹","Estás haciendo lo mejor que puedes, y eso basta.|👏","Hoy, respira y confía.|🌬️","Eres un milagro cotidiano.|✨","Lo que sueñas, puede ser real.|🌠","Estás creciendo, incluso en silencio.|🌱","Hoy, elige ver lo bonito.|👁️","Tu paz es prioridad.|☮️","No te olvides de disfrutar el presente.|🎁","Eres un alma fuerte y sensible.|💖","Hoy, da un paso más, sin miedo.|👣","Tu camino tiene sentido.|🛤️","Eres inspiración para más de una persona.|💫","Hoy, confía en tus decisiones.|✔️","La vida también se trata de aprender a soltar.|🎈","Eres suficiente, no necesitas compararte.|⭐","Hoy, celebra tu historia.|🎉","Tienes tanto por descubrir aún.|🔍","Eres capaz de crear belleza con lo que tienes.|🎨","Hoy, abraza tus emociones.|🤗","Estás sanando, incluso si no lo notas.|🩹","Tu esfuerzo no pasa desapercibido.|👀","Hoy, cree un poco más en ti.|💪","Eres más amor que miedo.|❤️","No todo lo bueno tiene que doler.|🌈","Hoy, deja que las cosas fluyan.|🌊","Eres la prueba de que se puede.|🏆","Lo que te hace diferente, te hace única.|💎","Hoy, respira sin prisa.|🌬️","Eres parte de algo bonito, aunque no lo veas.|🌺","Hoy, confía en que todo mejora.|📈","Tu luz no depende del clima.|☀️","Estás aprendiendo a cuidarte.|💚","Hoy, date un momento solo para ti.|🧘","Eres suficiente, incluso en pausa.|⏸️","No todo debe ser perfecto para ser hermoso.|🌸","Hoy, agradece tus avances.|📊","Eres fuerza en calma.|🌊","Hoy, elige amor en lugar de miedo.|💕","Estás creciendo con cada intento.|🌱","Tu ternura cambia el día de alguien.|🌼","Hoy, sonríe sin razón.|😊","Eres resiliente y capaz.|💪","No olvides lo lejos que has llegado.|🗺️","Hoy, deja que la vida te abrace.|🤗","Eres parte de algo que vale la pena.|✨","Hoy, confía en el proceso.|🔄","Estás brillando, aunque no lo notes.|💫","Eres amor en movimiento.|❤️","Hoy, date crédito por seguir.|🏅","Eres más que suficiente.|👑","Hoy, encuentra belleza en lo simple.|🍃","Estás haciendo lo mejor que puedes.|🌟","Eres un recordatorio de esperanza.|🌅","Hoy, suelta la culpa.|🎈","Eres paz, cuando eliges serlo.|☮️","Hoy, abrázate con cariño.|🤗","Eres parte de algo más grande.|🌌","Hoy, confía en ti sin dudar.|💪","Tu alma merece descanso.|😴","Hoy, elige ver el lado bueno.|😊","Eres el sol de muchos días grises.|☀️","Hoy, no te exijas tanto.|🌸","Eres hermosa en todas tus versiones.|🌹","Hoy, permítete sentir sin miedo.|💙","Eres más capaz de lo que piensas.|💪","Hoy, respira y suelta.|🌬️","Tu historia sigue en construcción.|🏗️","Hoy, agradece por existir.|🙏","Eres amor, y eso basta.|❤️","Hoy, recuerda que vales mucho.|💎","Estás aprendiendo a florecer.|🌺","Hoy, confía en tu fuerza.|💪","Eres un corazón valiente.|🦁","Hoy, descansa sin culpa.|😌","Eres capaz de lograr cosas grandes.|🏆","Hoy, busca la calma dentro.|🧘","Eres parte de algo lleno de luz.|✨","Hoy, sonríe a la vida.|😊","Estás haciendo lo correcto para ti.|✔️","Hoy, cree en los finales felices.|🌈","Eres luz para ti y para otros.|💡","Hoy, elige la ternura.|💗","Eres suficiente, siempre.|⭐","Hoy, aprecia lo que ya tienes.|🙏","Eres fuerza y dulzura.|🌸","Hoy, deja que la esperanza te guíe.|🌟","Eres el motivo de un buen recuerdo.|📸","Hoy, sé paciente contigo.|⏳","Eres valiente por seguir aquí.|💪","Hoy, confía en tu intuición.|🔮","Eres alguien que merece amor verdadero.|💖","Hoy, agradece tu camino.|🛤️","Eres inspiración incluso en silencio.|🌙","Hoy, da un paso más con fe.|👣","Eres parte de algo hermoso.|🌺","Hoy, recuerda que puedes empezar otra vez.|🌅","Eres magia sin intentarlo.|✨","Hoy, suelta lo que ya no necesitas.|🎈","Eres motivo de alegría.|😊","Hoy, celebra tu existencia.|🎉","Eres constancia disfrazada de calma.|🌊","Hoy, recuerda que todo pasa.|⏰","Eres más que tus errores.|⭐","Hoy, elige vivir con gratitud.|🙏","Eres luz, incluso cuando no lo creas.|💡","Hoy, date permiso para descansar.|🛌","Eres importante para alguien.|💝","Hoy, suelta el miedo.|🎈","Eres una historia en evolución.|📖","Hoy, confía en los pequeños milagros.|✨","Eres suficiente sin condiciones.|💖","Hoy, cree en tus posibilidades.|🌟","Eres parte de algo bueno.|🌈","Hoy, abraza lo que eres.|🤗","Eres más fuerte que tus dudas.|💪","Hoy, elige amor sobre todo.|❤️","Eres una chispa de esperanza.|✨","Hoy, disfruta lo que haces.|😊","Eres capaz de todo lo que sueñas.|🌠","Hoy, sé amable contigo.|💗","Eres luz en medio de la tormenta.|⛈️","Hoy, agradece lo que aprendiste.|📚","Eres un alma hermosa.|💫","Hoy, confía en el futuro.|🔮","Eres un faro para los demás.|🗼","Hoy, respira y sigue adelante.|🌬️","Eres amor, calma y fuerza.|💪","Hoy, no te olvides de sonreír.|😊","Eres una historia de resiliencia.|📖","Hoy, confía en que todo se acomoda.|🧩","Eres hermosa tal como eres.|🌹","Hoy, elige ver lo bueno en ti.|👁️","Eres la prueba de que la luz vuelve.|🌅","Hoy, suelta lo que pesa.|🎈","Eres parte de algo lleno de sentido.|🌟","Hoy, celebra tus pequeñas victorias.|🎊","Eres un alma en expansión.|🌌","Hoy, elige cuidarte.|💚","Eres todo lo que necesitas ser.|✨","Hoy, cree que mereces cosas buenas.|🎁","Eres más fuerte que tus miedos.|💪","Hoy, agradece el presente.|🎁","Eres un corazón lleno de amor.|❤️","Hoy, descansa sin remordimientos.|😴","Eres única y eso te hace especial.|💎","Hoy, sigue creyendo en ti.|⭐","Eres la calma que buscas.|🌊","Hoy, confía en el tiempo.|⏰","Eres capaz de volver a empezar.|🌅","Hoy, deja que la vida fluya.|🌊","Eres digna de amor, siempre.|💖","Hoy, agradece lo que fuiste y lo que eres.|🙏","Eres una promesa cumplida.|✅","Hoy, confía en el poder de lo simple.|🍃","Eres el abrazo que el mundo necesita.|🤗","Hoy, deja espacio para la esperanza.|🌟","Eres un recordatorio de bondad.|💝","Hoy, vive con ligereza.|🎈","Eres todo lo que necesitas ser.|✨","Hoy, elige paz.|☮️","Eres más valiente de lo que crees.|🦁","Hoy, confía en tu proceso.|🔄","Eres amor en forma humana.|💗","Hoy, sonríe por lo lejos que has llegado.|😊","Eres una historia digna de orgullo.|📖","Hoy, agradece por ti.|🙏","Eres la prueba de que se puede.|🏆","Hoy, confía en que todo saldrá bien.|🌈","Eres suficiente, y siempre lo serás.|⭐"];
         
         const messages = phrases.map(p => {
