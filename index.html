@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffecd2">
+    <link rel="manifest" href="manifest.json">
+    <title>365 Días de Luz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background 1s ease;
+        }
+        
+        body.month-0 { background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); }
+        body.month-1 { background: linear-gradient(135deg, #fce4ec 0%, #f48fb1 100%); }
+        body.month-2 { background: linear-gradient(135deg, #fff9c4 0%, #ffd54f 100%); }
+        body.month-3 { background: linear-gradient(135deg, #e8f5e9 0%, #81c784 100%); }
+        body.month-4 { background: linear-gradient(135deg, #fff3e0 0%, #ffb74d 100%); }
+        body.month-5 { background: linear-gradient(135deg, #fff8e1 0%, #ffd54f 100%); }
+        body.month-6 { background: linear-gradient(135deg, #f3e5f5 0%, #ba68c8 100%); }
+        body.month-7 { background: linear-gradient(135deg, #e0f2f1 0%, #4db6ac 100%); }
+        body.month-8 { background: linear-gradient(135deg, #efebe9 0%, #a1887f 100%); }
+        body.month-9 { background: linear-gradient(135deg, #ffe0b2 0%, #ff8a65 100%); }
+        body.month-10 { background: linear-gradient(135deg, #d7ccc8 0%, #8d6e63 100%); }
+        body.month-11 { background: linear-gradient(135deg, #e1f5fe 0%, #4fc3f7 100%); }
+        
+        .container {
+            background: linear-gradient(to bottom, #fffaf5 0%, #fff5eb 100%);
+            border-radius: 20px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.15);
+            max-width: 700px;
+            width: 100%;
+            padding: 50px 45px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 30px;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, #ff9a76 20%, #ff9a76 80%, transparent 100%);
+            opacity: 0.3;
+        }
+        
+        .hidden { display: none; }
+        
+        h1 { color: #d4845c; font-size: 2.5em; margin-bottom: 15px; font-weight: 400; }
+        
+        .subtitle { color: #8b7355; font-style: italic; margin-bottom: 35px; font-size: 1em; }
+        
+        .login-emoji { 
+            font-size: 5em; 
+            margin-bottom: 25px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .input-group {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            color: #8b4513;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #d4845c;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: Georgia, serif;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #ff9a76;
+            box-shadow: 0 0 20px rgba(255, 154, 118, 0.2);
+            background: white;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #ffd89b 0%, #ff9a76 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            margin: 10px 5px;
+            box-shadow: 0 4px 15px rgba(255, 154, 118, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 154, 118, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #ccc;
+        }
+        
+        button.month-0 { background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%); }
+        button.month-1 { background: linear-gradient(135deg, #f06292 0%, #e91e63 100%); }
+        button.month-2 { background: linear-gradient(135deg, #ffd54f 0%, #ffa000 100%); color: #333; }
+        button.month-3 { background: linear-gradient(135deg, #81c784 0%, #4caf50 100%); }
+        button.month-4 { background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%); }
+        button.month-5 { background: linear-gradient(135deg, #ffee58 0%, #fbc02d 100%); color: #333; }
+        button.month-6 { background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%); }
+        button.month-7 { background: linear-gradient(135deg, #4db6ac 0%, #00897b 100%); }
+        button.month-8 { background: linear-gradient(135deg, #a1887f 0%, #6d4c41 100%); }
+        button.month-9 { background: linear-gradient(135deg, #ff8a65 0%, #e64a19 100%); }
+        button.month-10 { background: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); }
+        button.month-11 { background: linear-gradient(135deg, #4fc3f7 0%, #0277bd 100%); }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ffe8d6;
+        }
+        
+        .day-number {
+            font-size: 2.5em;
+            color: #d4845c;
+            font-weight: bold;
+        }
+        
+        .date-display {
+            color: #8b7355;
+            font-size: 1.1em;
+            font-style: italic;
+            text-align: right;
+        }
+        
+        .theme-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd89b 0%, #ff9a76 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 10px rgba(255, 154, 118, 0.3);
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.5s ease;
+        }
+        
+        .theme-badge.month-0 { background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%); }
+        .theme-badge.month-1 { background: linear-gradient(135deg, #f06292 0%, #e91e63 100%); }
+        .theme-badge.month-2 { background: linear-gradient(135deg, #ffd54f 0%, #ffa000 100%); }
+        .theme-badge.month-3 { background: linear-gradient(135deg, #81c784 0%, #4caf50 100%); }
+        .theme-badge.month-4 { background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%); }
+        .theme-badge.month-5 { background: linear-gradient(135deg, #ffee58 0%, #fbc02d 100%); }
+        .theme-badge.month-6 { background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%); }
+        .theme-badge.month-7 { background: linear-gradient(135deg, #4db6ac 0%, #00897b 100%); }
+        .theme-badge.month-8 { background: linear-gradient(135deg, #a1887f 0%, #6d4c41 100%); }
+        .theme-badge.month-9 { background: linear-gradient(135deg, #ff8a65 0%, #e64a19 100%); }
+        .theme-badge.month-10 { background: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); }
+        .theme-badge.month-11 { background: linear-gradient(135deg, #4fc3f7 0%, #0277bd 100%); }
+        
+        .user-greeting {
+            background: linear-gradient(135deg, #fff5eb 0%, #ffe8d6 100%);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            color: #8b4513;
+            font-weight: 600;
+            border: 1px solid #ffe8d6;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .message-box {
+            background: white;
+            border: 2px solid #ffe8d6;
+            border-left: 5px solid #ff9a76;
+            padding: 35px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: all 0.5s ease;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .message-box.month-0 { border-left-color: #0288d1; border-color: #e0f7fa; }
+        .message-box.month-1 { border-left-color: #e91e63; border-color: #fce4ec; }
+        .message-box.month-2 { border-left-color: #ffa000; border-color: #fff9c4; }
+        .message-box.month-3 { border-left-color: #4caf50; border-color: #e8f5e9; }
+        .message-box.month-4 { border-left-color: #ff9800; border-color: #fff3e0; }
+        .message-box.month-5 { border-left-color: #fbc02d; border-color: #fff8e1; }
+        .message-box.month-6 { border-left-color: #9c27b0; border-color: #f3e5f5; }
+        .message-box.month-7 { border-left-color: #00897b; border-color: #e0f2f1; }
+        .message-box.month-8 { border-left-color: #6d4c41; border-color: #efebe9; }
+        .message-box.month-9 { border-left-color: #e64a19; border-color: #ffe0b2; }
+        .message-box.month-10 { border-left-color: #5d4037; border-color: #d7ccc8; }
+        .message-box.month-11 { border-left-color: #0277bd; border-color: #e1f5fe; }
+        
+        .message-box::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4em;
+            color: #ffe8d6;
+            font-family: Georgia, serif;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .message-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(255, 154, 118, 0.2);
+        }
+        
+        .day-icon { 
+            font-size: 2em; 
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .message-text {
+            color: #4a4a4a;
+            font-size: 1.25em;
+            line-height: 1.8;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hashtag {
+            display: inline-block;
+            margin-top: 15px;
+            color: #ff9a76;
+            font-size: 0.9em;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .reflection-box {
+            background: rgba(255, 250, 240, 0.7);
+            border: 2px dashed #d4845c;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .reflection-box label {
+            display: block;
+            color: #8b7355;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        
+        .reflection-box textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ffe8d6;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-family: Georgia, serif;
+            resize: vertical;
+            min-height: 80px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .reflection-box textarea:focus {
+            outline: none;
+            border-color: #ff9a76;
+            box-shadow: 0 0 10px rgba(255, 154, 118, 0.2);
+        }
+        
+        .locked-message {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .locked-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .birthday-message {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            border: 3px solid #ff9a76;
+            padding: 40px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            animation: birthday-celebration 2s ease-in-out infinite;
+            box-shadow: 0 15px 50px rgba(255, 215, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .birthday-message::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s ease-in-out infinite;
+        }
+        
+        @keyframes birthday-celebration {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                box-shadow: 0 15px 50px rgba(255, 215, 0, 0.4);
+            }
+            25% {
+                transform: scale(1.03) rotate(-1deg);
+                box-shadow: 0 20px 60px rgba(255, 215, 0, 0.6);
+            }
+            75% {
+                transform: scale(1.03) rotate(1deg);
+                box-shadow: 0 20px 60px rgba(255, 215, 0, 0.6);
+            }
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .birthday-emoji {
+            font-size: 5em;
+            animation: birthday-bounce 1.2s ease-in-out infinite;
+            display: inline-block;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
+        
+        @keyframes birthday-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-30px) scale(1.1) rotate(-5deg); }
+            50% { transform: translateY(0) scale(1.05); }
+            75% { transform: translateY(-15px) scale(1.1) rotate(5deg); }
+        }
+        
+        .birthday-text {
+            position: relative;
+            z-index: 1;
+            animation: text-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes text-glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(139, 69, 19, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(139, 69, 19, 0.5), 0 0 30px rgba(255, 215, 0, 0.3); }
+        }
+        
+        .birthday-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            font-size: 1.5em;
+            animation: twinkle 1.5s ease-in-out infinite;
+            opacity: 0;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+            }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            animation: confetti-fall 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            z-index: 9999;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg) scale(0.5);
+                opacity: 0.3;
+            }
+        }
+        
+        .balloon {
+            position: absolute;
+            font-size: 2em;
+            animation: float-up 4s ease-in infinite;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) translateX(30px) rotate(20deg);
+                opacity: 0;
+            }
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #ffb3b3 0%, #ff8888 100%);
+            font-size: 0.85em;
+            padding: 10px 22px;
+        }
+        
+        .date-input {
+            padding: 10px 18px;
+            border: 2px solid #d4845c;
+            border-radius: 12px;
+            font-size: 0.95em;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loginScreen">
+            <div class="login-emoji">✨</div>
+            <h1>365 Días de Luz</h1>
+            <p class="subtitle">Un año de mensajes que iluminarán tu camino</p>
+            
+            <div class="input-group">
+                <label for="userName">Tu nombre:</label>
+                <input type="text" id="userName" placeholder="Escribe tu nombre" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="userBirthday">Tu fecha de nacimiento:</label>
+                <input type="date" id="userBirthday" required>
+            </div>
+            
+            <button onclick="login()">🎁 Comenzar mi viaje</button>
+        </div>
+
+        <div id="calendarScreen" class="hidden">
+            <div class="user-greeting" id="greeting"></div>
+            
+            <div class="page-header">
+                <div class="day-number" id="dayNumber">Día 1</div>
+                <div class="date-display" id="dateDisplay"></div>
+            </div>
+
+            <div class="theme-badge" id="themeBadge">Fortaleza y Comienzos</div>
+            
+            <div id="birthdaySpecial"></div>
+            
+            <div class="message-box" id="messageBox">
+                <div class="day-icon" id="dayIcon">💫</div>
+                <p class="message-text" id="messageText"></p>
+                <span class="hashtag" id="hashtag">#EresLuz</span>
+            </div>
+
+            <div class="reflection-box">
+                <label>✍️ ¿Cómo te sientes hoy? (Opcional)</label>
+                <textarea id="reflectionText" placeholder="Escribe aquí tus pensamientos del día..."></textarea>
+            </div>
+            
+            <div>
+                <button onclick="showToday()">📅 Hoy</button>
+                <button onclick="previousDay()">← Anterior</button>
+                <button id="nextBtn" onclick="nextDay()">Siguiente →</button>
+            </div>
+            <br>
+            <input type="date" id="datePicker" class="date-input" onchange="goToDate()">
+            <br><br>
+            <button class="logout-btn" onclick="logout()">🚪 Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <script>
+        const phrases = ["Confía en ti, lo estás haciendo mejor de lo que crees.|💪","Tu sonrisa tiene poder, úsala hoy.|😊","No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖","Eres suficiente, incluso en tus días más simples.|✨","Hoy es un buen día para empezar de nuevo.|🌅","Cada paso pequeño cuenta, no lo olvides.|👣","La calma también es progreso.|🌊","Tienes un brillo que nadie puede copiar.|⭐","Lo que haces con amor siempre deja huella.|💝","Respira, vas bien.|🌬️","No corras, las flores no florecen de prisa.|🌸","Mereces todo lo bonito que estás buscando.|🌺","Lo que das, vuelve.|🔄","Eres más fuerte de lo que piensas.|💪","Tu energía cambia los lugares donde vas.|✨","Hoy elige verte con cariño.|💕","Lo estás intentando, y eso ya vale mucho.|🌟","No necesitas validación para ser valiosa.|👑","A veces descansar también es avanzar.|🛏️","Cada día puedes reinventarte un poco.|🦋","Eres luz, aunque no todos lo noten.|💡","No te compares, tu historia es única.|📖","Los días buenos llegan, ten paciencia.|⏳","Agradece lo que tienes, y verás más motivos para sonreír.|🙏","Hoy, elige la paz antes que la prisa.|☮️","Tu voz importa, úsala con amor.|🗣️","Has superado tanto, no lo olvides.|🏔️","Lo mejor aún no ha llegado.|🎁","No necesitas ser más, solo ser tú.|🌈","A veces el alma solo necesita un respiro.|🌬️","Las cosas buenas toman tiempo.|⏰","Tu presencia ya es un regalo.|🎀","Hoy elige ser amable contigo misma.|💗","No te castigues por sentir.|💙","Lo que hoy te pesa, mañana puede enseñarte.|📚","Sigue adelante, incluso si es despacio.|🐢","Cada error te ha acercado a algo valioso.|💎","No apagues tu luz por miedo a brillar.|💫","Tienes tanto por dar.|🎁","No necesitas tener todo claro para avanzar.|🧭","Permítete disfrutar, sin culpa.|🌻","Tu corazón sabe más de lo que imaginas.|❤️","Sonríe, hoy puede ser un buen comienzo.|😊","Las cosas cambian, y tú también puedes hacerlo.|🔄","No subestimes lo lejos que has llegado.|🗺️","Tu bondad es una fuerza.|🌟","No todo tiene que tener sentido ahora.|🌙","Hoy también cuenta, incluso si fue tranquilo.|🍃","Haz espacio para lo que te hace bien.|🏡","Lo simple también puede ser hermoso.|🌿","Confía en el proceso.|🔮","Tienes permiso para descansar.|😴","Hoy puedes elegir ver lo bueno.|👀","No te apures, el sol también tarda en salir.|🌅","Eres capaz, incluso cuando dudas.|💪","No hay prisa para florecer.|🌷","Cada día trae una nueva oportunidad.|🌄","Estás haciendo lo mejor que puedes.|🌟","No necesitas demostrar nada, ya vales.|👑","A veces, solo necesitas respirar profundo.|🌬️","La ternura también es fortaleza.|🌸","Has crecido más de lo que notas.|🌱","Hoy es un buen día para agradecer.|🙏","No te rindas por cansancio, descansa.|😌","Eres parte de algo bonito.|🌺","Aunque no lo veas, estás avanzando.|🚶","Tu forma de cuidar también cuenta.|💞","No temas empezar de cero, ahí nace la fuerza.|🔥","Mereces calma.|🕊️","Tienes un corazón valiente.|💖","Hoy, date crédito por todo lo que lograste.|🏆","No necesitas ser productiva para tener valor.|✨","Eres suficiente, incluso en silencio.|🤫","A veces, la esperanza llega despacio.|🌤️","Tienes derecho a elegir tu propio ritmo.|🎵","La bondad siempre vuelve.|🔄","No todo lo bonito se ve, algunas cosas se sienten.|💫","No estás sola, el mundo también te sostiene.|🌍","Las pequeñas victorias importan.|🎉","Lo que sueñas no es imposible.|🌠","Cree en ti, aunque sea un poquito más.|⭐","Eres más capaz de lo que imaginas.|💪","Hoy, elige no exigirte tanto.|🌼","Agradece tus pasos, incluso los torpes.|👣","Estás aprendiendo, no fallando.|📚","La vida también se disfruta lento.|🐌","No necesitas tener todas las respuestas.|❓","Tu manera de ser ya es hermosa.|🌹","Hoy, suelta lo que no puedas controlar.|🎈","Las cosas buenas también te merecen a ti.|💝","No te olvides de celebrar tus avances.|🎊","El tiempo no cura todo, pero enseña.|⏳","Hoy, si puedes, sonríe un poco más.|😊","Eres un trabajo en progreso, y eso está bien.|🔧","Tu ternura cambia el mundo.|🌎","Nadie más puede ser tú, y eso es tu magia.|✨","Hoy también mereces amor.|❤️","Lo que te hace diferente, te hace brillar.|💎","No todo se mide en resultados.|📊","Permítete sentir orgullo de ti.|🦁","Estás creciendo incluso sin darte cuenta.|🌳","La calma llega cuando confías.|🌊","No apagues tu entusiasmo.|🔥","Tus pasos son valientes, aunque sean pequeños.|👣","Hoy puedes empezar otra vez.|🌅","Eres parte de algo más grande.|🌌","No te sientas mal por necesitar tiempo.|⏰","Cada día te acerca a tu mejor versión.|🦋","Tus sueños también merecen espacio.|💭","Eres un ser de luz, aunque no siempre brilles igual.|💡","No tienes que tenerlo todo bajo control.|🎮","Tienes derecho a descansar sin culpa.|🛌","Tu esfuerzo tiene valor.|🏅","Hoy, elige ser paciente contigo.|⏳","Todo lo que siembras desde el amor florece.|🌻","Eres valiente por seguir intentando.|🦸","Lo importante no es la velocidad, sino el rumbo.|🧭","Eres más constante de lo que crees.|⛰️","A veces rendirse al descanso también es sabio.|😌","No necesitas validación para sentirte bien.|💫","Tu paz vale más que la aprobación.|☮️","Estás aprendiendo a quererte, y eso es hermoso.|💗","La magia está en las cosas pequeñas.|✨","Hoy, agradece lo simple.|🍂","Eres resiliente, aunque no lo notes.|💪","No te olvides de mirar al cielo.|☁️","Lo estás haciendo bien, de verdad.|👍","La felicidad no se busca, se cultiva.|🌱","Hoy, confía un poco más en la vida.|🌈","Eres luz incluso en los días nublados.|🌥️","Tu ternura es un regalo.|🎁","Cada día cuenta, incluso los lentos.|📆","No necesitas ser fuerte todo el tiempo.|🛡️","El descanso también es parte del camino.|🚶","Eres importante, aunque no te lo digan.|⭐","Hoy, elige soltar el peso que no te pertenece.|🎈","Lo que das con amor, vuelve multiplicado.|💕","Estás aprendiendo a vivir, no a rendirte.|🌟","Tu forma de amar hace la diferencia.|💖","Hoy, cree en la posibilidad de cosas buenas.|🌠","Eres más valiente de lo que imaginas.|🦁","No necesitas correr, vas bien.|🚶","La esperanza siempre encuentra el camino.|🌅","No tienes que tener un plan perfecto.|📝","Estás exactamente donde debes estar.|📍","La vida también es esto: intentarlo.|🎯","No te juzgues por tus pausas.|⏸️","Eres un corazón que sigue latiendo, y eso ya es mucho.|💓","Hoy, elige calma en lugar de miedo.|🕊️","Lo que hoy te cuesta, mañana te fortalecerá.|💪","No te rindas, el cambio tarda pero llega.|🌱","Tienes tanto amor dentro, compártelo contigo también.|💝","Estás floreciendo, incluso si no lo notas.|🌺","Hoy, confía en tu camino.|🛤️","Tu existencia ya es suficiente.|✨","No necesitas ser más, solo ser auténtica.|🌟","Eres una historia hermosa en proceso.|📖","A veces lo mejor es simplemente seguir.|➡️","Hoy, abrázate con paciencia.|🤗","Lo estás haciendo bien, aunque no lo veas.|👀","Cada día es una oportunidad para renacer.|🌄","Eres capaz, incluso cuando lo dudas.|💪","Hoy, sonríe aunque no haya motivo.|😊","No te olvides de cuidar tu energía.|⚡","La bondad siempre deja huella.|👣","Eres motivo de inspiración.|💫","Lo que hoy siembras, mañana florece.|🌷","Estás aprendiendo a brillar sin miedo.|✨","No subestimes tu crecimiento.|📈","Hoy, respira y sigue.|🌬️","Eres más fuerte de lo que sientes hoy.|💪","El universo no se ha olvidado de ti.|🌌","Lo estás logrando, poco a poco.|🎯","Hoy, elige la paz por encima del ruido.|🔇","Eres una persona increíble.|🌟","Todo tiene su momento, confía.|⏰","No te castigues por los tropiezos.|🩹","Eres arte, aunque no siempre te veas así.|🎨","Hoy, permite que la vida te sorprenda.|🎁","Eres parte de algo luminoso.|✨","No pierdas la fe en lo que sueñas.|💭","Tu luz guía más de lo que imaginas.|🔦","Hoy, haz algo que te haga bien.|💚","Eres valiosa sin tener que demostrarlo.|💎","Lo que hoy te duele, te está transformando.|🦋","Mereces días suaves.|☁️","Hoy, deja que tu alma respire.|🌬️","Eres suficiente, tal como estás.|✨","No necesitas más, ya tienes lo esencial.|💝","Hoy, date tiempo.|⏳","Estás aprendiendo a quererte con calma.|💗","La ternura también es un acto de fuerza.|🌸","No te compares, tu ritmo es perfecto.|🎵","Eres luz, incluso cuando brillas poquito.|💡","Hoy, agradece lo que sí tienes.|🙏","Tu esencia es hermosa.|🌹","Estás haciendo lo mejor que puedes, y eso basta.|👏","Hoy, respira y confía.|🌬️","Eres un milagro cotidiano.|✨","Lo que sueñas, puede ser real.|🌠","Estás creciendo, incluso en silencio.|🌱","Hoy, elige ver lo bonito.|👁️","Tu paz es prioridad.|☮️","No te olvides de disfrutar el presente.|🎁","Eres un alma fuerte y sensible.|💖","Hoy, da un paso más, sin miedo.|👣","Tu camino tiene sentido.|🛤️","Eres inspiración para más de una persona.|💫","Hoy, confía en tus decisiones.|✔️","La vida también se trata de aprender a soltar.|🎈","Eres suficiente, no necesitas compararte.|⭐","Hoy, celebra tu historia.|🎉","Tienes tanto por descubrir aún.|🔍","Eres capaz de crear belleza con lo que tienes.|🎨","Hoy, abraza tus emociones.|🤗","Estás sanando, incluso si no lo notas.|🩹","Tu esfuerzo no pasa desapercibido.|👀","Hoy, cree un poco más en ti.|💪","Eres más amor que miedo.|❤️","No todo lo bueno tiene que doler.|🌈","Hoy, deja que las cosas fluyan.|🌊","Eres la prueba de que se puede.|🏆","Lo que te hace diferente, te hace única.|💎","Hoy, respira sin prisa.|🌬️","Eres parte de algo bonito, aunque no lo veas.|🌺","Hoy, confía en que todo mejora.|📈","Tu luz no depende del clima.|☀️","Estás aprendiendo a cuidarte.|💚","Hoy, date un momento solo para ti.|🧘","Eres suficiente, incluso en pausa.|⏸️","No todo debe ser perfecto para ser hermoso.|🌸","Hoy, agradece tus avances.|📊","Eres fuerza en calma.|🌊","Hoy, elige amor en lugar de miedo.|💕","Estás creciendo con cada intento.|🌱","Tu ternura cambia el día de alguien.|🌼","Hoy, sonríe sin razón.|😊","Eres resiliente y capaz.|💪","No olvides lo lejos que has llegado.|🗺️","Hoy, deja que la vida te abrace.|🤗","Eres parte de algo que vale la pena.|✨","Hoy, confía en el proceso.|🔄","Estás brillando, aunque no lo notes.|💫","Eres amor en movimiento.|❤️","Hoy, date crédito por seguir.|🏅","Eres más que suficiente.|👑","Hoy, encuentra belleza en lo simple.|🍃","Estás haciendo lo mejor que puedes.|🌟","Eres un recordatorio de esperanza.|🌅","Hoy, suelta la culpa.|🎈","Eres paz, cuando eliges serlo.|☮️","Hoy, abrázate con cariño.|🤗","Eres parte de algo más grande.|🌌","Hoy, confía en ti sin dudar.|💪","Tu alma merece descanso.|😴","Hoy, elige ver el lado bueno.|😊","Eres el sol de muchos días grises.|☀️","Hoy, no te exijas tanto.|🌸","Eres hermosa en todas tus versiones.|🌹","Hoy, permítete sentir sin miedo.|💙","Eres más capaz de lo que piensas.|💪","Hoy, respira y suelta.|🌬️","Tu historia sigue en construcción.|🏗️","Hoy, agradece por existir.|🙏","Eres amor, y eso basta.|❤️","Hoy, recuerda que vales mucho.|💎","Estás aprendiendo a florecer.|🌺","Hoy, confía en tu fuerza.|💪","Eres un corazón valiente.|🦁","Hoy, descansa sin culpa.|😌","Eres capaz de lograr cosas grandes.|🏆","Hoy, busca la calma dentro.|🧘","Eres parte de algo lleno de luz.|✨","Hoy, sonríe a la vida.|😊","Estás haciendo lo correcto para ti.|✔️","Hoy, cree en los finales felices.|🌈","Eres luz para ti y para otros.|💡","Hoy, elige la ternura.|💗","Eres suficiente, siempre.|⭐","Hoy, aprecia lo que ya tienes.|🙏","Eres fuerza y dulzura.|🌸","Hoy, deja que la esperanza te guíe.|🌟","Eres el motivo de un buen recuerdo.|📸","Hoy, sé paciente contigo.|⏳","Eres valiente por seguir aquí.|💪","Hoy, confía en tu intuición.|🔮","Eres alguien que merece amor verdadero.|💖","Hoy, agradece tu camino.|🛤️","Eres inspiración incluso en silencio.|🌙","Hoy, da un paso más con fe.|👣","Eres parte de algo hermoso.|🌺","Hoy, recuerda que puedes empezar otra vez.|🌅","Eres magia sin intentarlo.|✨","Hoy, suelta lo que ya no necesitas.|🎈","Eres motivo de alegría.|😊","Hoy, celebra tu existencia.|🎉","Eres constancia disfrazada de calma.|🌊","Hoy, recuerda que todo pasa.|⏰","Eres más que tus errores.|⭐","Hoy, elige vivir con gratitud.|🙏","Eres luz, incluso cuando no lo creas.|💡","Hoy, date permiso para descansar.|🛌","Eres importante para alguien.|💝","Hoy, suelta el miedo.|🎈","Eres una historia en evolución.|📖","Hoy, confía en los pequeños milagros.|✨","Eres suficiente sin condiciones.|💖","Hoy, cree en tus posibilidades.|🌟","Eres parte de algo bueno.|🌈","Hoy, abraza lo que eres.|🤗","Eres más fuerte que tus dudas.|💪","Hoy, elige amor sobre todo.|❤️","Eres una chispa de esperanza.|✨","Hoy, disfruta lo que haces.|😊","Eres capaz de todo lo que sueñas.|🌠","Hoy, sé amable contigo.|💗","Eres luz en medio de la tormenta.|⛈️","Hoy, agradece lo que aprendiste.|📚","Eres un alma hermosa.|💫","Hoy, confía en el futuro.|🔮","Eres un faro para los demás.|🗼","Hoy, respira y sigue adelante.|🌬️","Eres amor, calma y fuerza.|💪","Hoy, no te olvides de sonreír.|😊","Eres una historia de resiliencia.|📖","Hoy, confía en que todo se acomoda.|🧩","Eres hermosa tal como eres.|🌹","Hoy, elige ver lo bueno en ti.|👁️","Eres la prueba de que la luz vuelve.|🌅","Hoy, suelta lo que pesa.|🎈","Eres parte de algo lleno de sentido.|🌟","Hoy, celebra tus pequeñas victorias.|🎊","Eres un alma en expansión.|🌌","Hoy, elige cuidarte.|💚","Eres todo lo que necesitas ser.|✨","Hoy, cree que mereces cosas buenas.|🎁","Eres más fuerte que tus miedos.|💪","Hoy, agradece el presente.|🎁","Eres un corazón lleno de amor.|❤️","Hoy, descansa sin remordimientos.|😴","Eres única y eso te hace especial.|💎","Hoy, sigue creyendo en ti.|⭐","Eres la calma que buscas.|🌊","Hoy, confía en el tiempo.|⏰","Eres capaz de volver a empezar.|🌅","Hoy, deja que la vida fluya.|🌊","Eres digna de amor, siempre.|💖","Hoy, agradece lo que fuiste y lo que eres.|🙏","Eres una promesa cumplida.|✅","Hoy, confía en el poder de lo simple.|🍃","Eres el abrazo que el mundo necesita.|🤗","Hoy, deja espacio para la esperanza.|🌟","Eres un recordatorio de bondad.|💝","Hoy, vive con ligereza.|🎈","Eres todo lo que necesitas ser.|✨","Hoy, elige paz.|☮️","Eres más valiente de lo que crees.|🦁","Hoy, confía en tu proceso.|🔄","Eres amor en forma humana.|💗","Hoy, sonríe por lo lejos que has llegado.|😊","Eres una historia digna de orgullo.|📖","Hoy, agradece por ti.|🙏","Eres la prueba de que se puede.|🏆","Hoy, confía en que todo saldrá bien.|🌈","Eres suficiente, y siempre lo serás.|⭐"];
+        
+        const messages = phrases.map(p => {
+            const [text, icon] = p.split('|');
+            return {text, icon};
+        });
+
+        const monthlyThemes = [
+            { month: 0, name: "Fortaleza y Comienzos", icon: "🌅" },
+            { month: 1, name: "Cariño y Gratitud", icon: "💝" },
+            { month: 2, name: "Sueños y Metas", icon: "🌟" },
+            { month: 3, name: "Renovación y Crecimiento", icon: "🌱" },
+            { month: 4, name: "Alegría y Celebración", icon: "🎉" },
+            { month: 5, name: "Luz y Energía", icon: "☀️" },
+            { month: 6, name: "Libertad y Aventura", icon: "🦋" },
+            { month: 7, name: "Reflexión y Paz", icon: "🌊" },
+            { month: 8, name: "Sabiduría y Aprendizaje", icon: "📚" },
+            { month: 9, name: "Cosecha y Abundancia", icon: "🍂" },
+            { month: 10, name: "Agradecimiento", icon: "🙏" },
+            { month: 11, name: "Magia y Esperanza", icon: "✨" }
+        ];
+
+        const hashtags = ["#EresLuz", "#DíaBrillante", "#MotivoDeAlegría", "#TuEsencia", "#EnergíaPositiva", "#ValorInterior", "#BrillaPorTi", "#TúImportas", "#AmorPropio", "#FuerzaInterior", "#CadaDíaCuenta", "#TúBrillas", "#AlmaHermosa", "#TuPresencia", "#EresMagia", "#TuVoz", "#CorazónValiente", "#EsenciaÚnica", "#TuSonrisa", "#GraciasPorSer"];
+
+        let currentDate = new Date();
+        let userData = null;
+        let reflections = {};
+
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 1);
+            return Math.floor((date - start) / 86400000) + 1;
+        }
+
+        function isBirthday(date, birthdayDate) {
+            // Crear copias para no modificar las originales
+            const checkDate = new Date(date.getTime());
+            const birthDate = new Date(birthdayDate.getTime());
+            
+            // Normalizar ambas fechas
+            checkDate.setHours(12, 0, 0, 0);
+            birthDate.setHours(12, 0, 0, 0);
+            
+            // Comparar solo mes y día
+            const sameMonth = checkDate.getMonth() === birthDate.getMonth();
+            const sameDay = checkDate.getDate() === birthDate.getDate();
+            
+            // Debug en consola
+            console.log('Comparando cumpleaños:', {
+                fechaActual: checkDate.toLocaleDateString('es-ES'),
+                fechaNacimiento: birthDate.toLocaleDateString('es-ES'),
+                mesActual: checkDate.getMonth(),
+                mesNacimiento: birthDate.getMonth(),
+                diaActual: checkDate.getDate(),
+                diaNacimiento: birthDate.getDate(),
+                esCumpleaños: sameMonth && sameDay
+            });
+            
+            return sameMonth && sameDay;
+        }
+
+        function createConfetti() {
+            const colors = ['#ff9a76', '#ffd700', '#ff69b4', '#87ceeb', '#98fb98', '#ffb6c1', '#dda0dd', '#f0e68c'];
+            const shapes = ['●', '■', '▲', '★', '♥', '♦'];
+            
+            for (let i = 0; i < 200; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 15);
+            }
+        }
+
+        function createBalloons() {
+            const balloonEmojis = ['🎈', '🎈', '🎈', '🎊', '🎉'];
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    balloon.textContent = balloonEmojis[Math.floor(Math.random() * balloonEmojis.length)];
+                    balloon.style.left = Math.random() * 100 + '%';
+                    balloon.style.bottom = '-50px';
+                    balloon.style.animationDelay = Math.random() * 2 + 's';
+                    balloon.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    document.getElementById('birthdaySpecial').appendChild(balloon);
+                    setTimeout(() => balloon.remove(), 6000);
+                }, i * 400);
+            }
+        }
+
+        function createStars(container) {
+            const starPositions = [
+                { top: '10%', left: '10%', delay: '0s' },
+                { top: '20%', left: '85%', delay: '0.3s' },
+                { top: '70%', left: '15%', delay: '0.6s' },
+                { top: '65%', left: '80%', delay: '0.9s' },
+                { top: '40%', left: '5%', delay: '1.2s' },
+                { top: '35%', left: '90%', delay: '1.5s' }
+            ];
+            starPositions.forEach(pos => {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.textContent = '✨';
+                star.style.top = pos.top;
+                star.style.left = pos.left;
+                star.style.animationDelay = pos.delay;
+                container.appendChild(star);
+            });
+        }
+
+        function login() {
+            const name = document.getElementById('userName').value;
+            const birthdayInput = document.getElementById('userBirthday').value;
+            if (!name || !birthdayInput) return alert('Por favor completa todos los campos');
+            
+            // Parsear correctamente la fecha en formato YYYY-MM-DD
+            const [year, month, day] = birthdayInput.split('-');
+            const birthday = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 12, 0, 0);
+            
+            userData = {name, birthday};
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('calendarScreen').classList.remove('hidden');
+            document.getElementById('greeting').textContent = `Hola, ${name} 🌸`;
+            updateDisplay();
+        }
+
+        function logout() {
+            userData = null;
+            currentDate = new Date();
+            reflections = {};
+            document.getElementById('calendarScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('userName').value = '';
+            document.getElementById('userBirthday').value = '';
+        }
+
+        function updateDisplay() {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const selected = new Date(currentDate);
+            selected.setHours(0,0,0,0);
+            
+            const dayOfYear = getDayOfYear(currentDate);
+            const message = messages[dayOfYear - 1] || messages[0];
+            const currentMonth = currentDate.getMonth();
+            const theme = monthlyThemes.find(t => t.month === currentMonth);
+            
+            document.getElementById('dayNumber').textContent = `Día ${dayOfYear}`;
+            document.getElementById('dateDisplay').textContent = currentDate.toLocaleDateString('es-ES', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+            document.getElementById('themeBadge').textContent = `${theme.icon} ${theme.name}`;
+            document.getElementById('themeBadge').className = `theme-badge month-${currentMonth}`;
+            document.getElementById('messageBox').className = `message-box month-${currentMonth}`;
+            document.getElementById('datePicker').valueAsDate = currentDate;
+            document.body.className = `month-${currentMonth}`;
+            
+            const buttons = document.querySelectorAll('button:not(.logout-btn)');
+            buttons.forEach(btn => btn.className = `month-${currentMonth}`);
+            
+            const dateKey = selected.toDateString();
+            document.getElementById('reflectionText').value = reflections[dateKey] || '';
+            
+            const birthdaySpecial = document.getElementById('birthdaySpecial');
+            
+            if (userData && isBirthday(selected, userData.birthday)) {
+                createConfetti();
+                createBalloons();
+                birthdaySpecial.innerHTML = `
+                    <div class="birthday-message">
+                        <div class="birthday-stars"></div>
+                        <div class="birthday-emoji">🎂</div>
+                        <h2 class="birthday-text" style="color: #8b4513; margin: 20px 0; font-size: 2.2em;">¡FELIZ CUMPLEAÑOS, ${userData.name.toUpperCase()}!</h2>
+                        <p class="birthday-text" style="font-size: 1.4em; color: #8b4513; margin: 15px 0;">🎉 Este es tu día especial 🎉</p>
+                        <p class="birthday-text" style="margin-top: 15px; color: #8b4513; font-style: italic; font-size: 1.1em;">Que todos tus sueños se hagan realidad ✨</p>
+                        <p class="birthday-text" style="margin-top: 15px; color: #8b4513; font-size: 1.1em;">El mundo celebra tu existencia hoy 🌟</p>
+                        <div style="margin-top: 25px; font-size: 2em;">🎊 🎁 🎈 🎉 🎂</div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    const starsContainer = birthdaySpecial.querySelector('.birthday-stars');
+                    if (starsContainer) createStars(starsContainer);
+                }, 100);
+            } else {
+                birthdaySpecial.innerHTML = '';
+            }
+            
+            if (selected > today) {
+                document.getElementById('dayIcon').textContent = '🔒';
+                document.getElementById('messageText').innerHTML = '<span class="locked-message">Este mensaje estará disponible cuando llegue este día especial. ¡Ten paciencia! 💖</span>';
+                document.getElementById('hashtag').textContent = '#ProntoLlegará';
+                document.getElementById('nextBtn').disabled = true;
+                document.getElementById('reflectionText').disabled = true;
+            } else {
+                document.getElementById('dayIcon').textContent = message.icon;
+                document.getElementById('messageText').textContent = message.text;
+                document.getElementById('hashtag').textContent = hashtags[dayOfYear % hashtags.length];
+                document.getElementById('reflectionText').disabled = false;
+                
+                const tomorrow = new Date(selected);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                document.getElementById('nextBtn').disabled = tomorrow > today;
+            }
+            
+            const msgBox = document.getElementById('messageBox');
+            msgBox.style.animation = 'none';
+            setTimeout(() => msgBox.style.animation = 'fadeIn 0.8s ease forwards', 10);
+        }
+
+        document.getElementById('reflectionText').addEventListener('input', function() {
+            const dateKey = new Date(currentDate).toDateString();
+            reflections[dateKey] = this.value;
+        });
+
+        function showToday() {
+            currentDate = new Date();
+            updateDisplay();
+        }
+
+        function previousDay() {
+            currentDate.setDate(currentDate.getDate() - 1);
+            updateDisplay();
+        }
+
+        function nextDay() {
+            currentDate.setDate(currentDate.getDate() + 1);
+            updateDisplay();
+        }
+
+        function goToDate() {
+            const selected = document.getElementById('datePicker').valueAsDate;
+            if (selected) {
+                currentDate = new Date(selected);
+                currentDate.setHours(12);
+                updateDisplay();
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registrado'))
+                    .catch(err => console.log('Service Worker no disponible'));
+            });
+        }
+    </script>
+</body>
+</html>
