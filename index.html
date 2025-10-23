@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#ffecd2" id="themeColor">
+    <meta name="theme-color" content="#87CEEB" id="themeColor">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,73 +13,34 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: Georgia, serif;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            transition: background 1s ease;
+            padding: 0;
+            margin: 0;
+            transition: all 1s ease;
+            overflow: hidden;
         }
         
-        body.night-mode {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        /* TEMA DÍA SOLEADO */
+        body.sunny {
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #FFF8DC 100%);
         }
         
-        body.night-mode .container {
-            background: linear-gradient(to bottom, #34495e 0%, #2c3e50 100%);
-            color: #ecf0f1;
+        /* TEMA NOCHE */
+        body.night {
+            background: linear-gradient(180deg, #0B1026 0%, #1a237e 50%, #283593 100%);
         }
         
-        body.night-mode h1,
-        body.night-mode .day-number,
-        body.night-mode .date-display,
-        body.night-mode .subtitle {
-            color: #f39c12 !important;
+        /* TEMA LLUVIA */
+        body.rainy {
+            background: linear-gradient(180deg, #4A5568 0%, #667eea 50%, #764ba2 100%);
         }
         
-        body.night-mode .message-box {
-            background: #2c3e50;
-            border-color: #34495e;
-            border-left-color: #f39c12;
-        }
-        
-        body.night-mode .message-text {
-            color: #ecf0f1;
-        }
-        
-        body.night-mode .reflection-box {
-            background: rgba(52, 73, 94, 0.7);
-            border-color: #f39c12;
-        }
-        
-        body.night-mode .reflection-box textarea {
-            background: #34495e;
-            color: #ecf0f1;
-            border-color: #2c3e50;
-        }
-        
-        body.night-mode .user-greeting {
-            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-            color: #f39c12;
-            border-color: #2c3e50;
-        }
-        
-        body.rainy-mode {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        body.rainy-mode .container {
-            background: linear-gradient(to bottom, #e8eaf6 0%, #c5cae9 100%);
-        }
-        
-        body.rainy-mode .message-box {
-            border-left-color: #5c6bc0;
-            border-color: #c5cae9;
-        }
-        
-        .rain {
+        /* Efectos de clima */
+        .weather-effects {
             position: fixed;
             top: 0;
             left: 0;
@@ -87,13 +48,106 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+            overflow: hidden;
         }
         
+        /* Nubes */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 100px;
+            opacity: 0.7;
+            animation: float-cloud 60s linear infinite;
+        }
+        
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 100px;
+        }
+        
+        .cloud::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+        
+        .cloud::after {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            right: 10px;
+        }
+        
+        @keyframes float-cloud {
+            from { transform: translateX(-200px); }
+            to { transform: translateX(calc(100vw + 200px)); }
+        }
+        
+        /* Estrellas */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Sol */
+        .sun {
+            position: absolute;
+            top: 60px;
+            right: 60px;
+            width: 100px;
+            height: 100px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 60px #FFD700, 0 0 100px #FFA500;
+            animation: pulse-sun 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-sun {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px #FFD700, 0 0 100px #FFA500; }
+            50% { transform: scale(1.1); box-shadow: 0 0 80px #FFD700, 0 0 120px #FFA500; }
+        }
+        
+        /* Luna */
+        .moon {
+            position: absolute;
+            top: 60px;
+            right: 60px;
+            width: 80px;
+            height: 80px;
+            background: #F0E68C;
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(240, 230, 140, 0.8);
+            position: relative;
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(240, 230, 140, 0.4);
+            border-radius: 50%;
+        }
+        
+        /* Gotas de lluvia */
         .raindrop {
             position: absolute;
             width: 2px;
-            height: 50px;
-            background: linear-gradient(to bottom, transparent, rgba(174, 194, 224, 0.5));
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, rgba(174, 194, 224, 0.8));
             animation: fall linear infinite;
         }
         
@@ -101,470 +155,302 @@
             to { transform: translateY(100vh); }
         }
         
-        .weather-indicator {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2em;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        body.month-0 { background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); }
-        body.month-1 { background: linear-gradient(135deg, #fce4ec 0%, #f48fb1 100%); }
-        body.month-2 { background: linear-gradient(135deg, #fff9c4 0%, #ffd54f 100%); }
-        body.month-3 { background: linear-gradient(135deg, #e8f5e9 0%, #81c784 100%); }
-        body.month-4 { background: linear-gradient(135deg, #fff3e0 0%, #ffb74d 100%); }
-        body.month-5 { background: linear-gradient(135deg, #fff8e1 0%, #ffd54f 100%); }
-        body.month-6 { background: linear-gradient(135deg, #f3e5f5 0%, #ba68c8 100%); }
-        body.month-7 { background: linear-gradient(135deg, #e0f2f1 0%, #4db6ac 100%); }
-        body.month-8 { background: linear-gradient(135deg, #efebe9 0%, #a1887f 100%); }
-        body.month-9 { background: linear-gradient(135deg, #ffe0b2 0%, #ff8a65 100%); }
-        body.month-10 { background: linear-gradient(135deg, #d7ccc8 0%, #8d6e63 100%); }
-        body.month-11 { background: linear-gradient(135deg, #e1f5fe 0%, #4fc3f7 100%); }
-        
-        .container {
-            background: linear-gradient(to bottom, #fffaf5 0%, #fff5eb 100%);
-            border-radius: 20px;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.15);
-            max-width: 700px;
-            width: 100%;
-            padding: 50px 45px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .container::before {
-            content: '';
+        /* Relámpago */
+        .lightning {
             position: absolute;
             top: 0;
-            left: 30px;
-            width: 2px;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, transparent 0%, #ff9a76 20%, #ff9a76 80%, transparent 100%);
-            opacity: 0.3;
+            background: rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            animation: flash 8s ease-in-out infinite;
+        }
+        
+        @keyframes flash {
+            0%, 90%, 92%, 100% { opacity: 0; }
+            91% { opacity: 1; }
+        }
+        
+        /* Container del widget */
+        .widget-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+        
+        body.night .widget-container {
+            background: rgba(26, 35, 126, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        body.rainy .widget-container {
+            background: rgba(74, 85, 104, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
         
         .hidden { display: none; }
         
-        h1 { color: #d4845c; font-size: 2.5em; margin-bottom: 15px; font-weight: 400; }
-        
-        .subtitle { color: #8b7355; font-style: italic; margin-bottom: 35px; font-size: 1em; }
-        
-        .login-emoji { 
-            font-size: 5em; 
-            margin-bottom: 25px;
+        /* Login screen */
+        .login-emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
             animation: float 3s ease-in-out infinite;
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
         }
         
         .input-group {
             text-align: left;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         .input-group label {
             display: block;
-            color: #8b4513;
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
         
-        input[type="text"], input[type="date"] {
+        input[type="text"],
+        input[type="date"] {
             width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #d4845c;
-            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
             font-size: 1em;
-            transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.9);
-            font-family: Georgia, serif;
+            transition: all 0.3s ease;
         }
         
         input:focus {
             outline: none;
-            border-color: #ff9a76;
-            box-shadow: 0 0 20px rgba(255, 154, 118, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
             background: white;
         }
         
         button {
-            background: linear-gradient(135deg, #ffd89b 0%, #ff9a76 100%);
-            color: white;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
             border: none;
-            padding: 12px 28px;
-            border-radius: 25px;
+            padding: 12px 24px;
+            border-radius: 20px;
             cursor: pointer;
             font-size: 0.95em;
             font-weight: 600;
             margin: 10px 5px;
-            box-shadow: 0 4px 15px rgba(255, 154, 118, 0.3);
             transition: all 0.3s ease;
-            font-family: 'Segoe UI', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         
         button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(255, 154, 118, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: white;
         }
         
         button:disabled {
             opacity: 0.4;
             cursor: not-allowed;
-            background: #ccc;
         }
         
-        button.month-0 { background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%); }
-        button.month-1 { background: linear-gradient(135deg, #f06292 0%, #e91e63 100%); }
-        button.month-2 { background: linear-gradient(135deg, #ffd54f 0%, #ffa000 100%); color: #333; }
-        button.month-3 { background: linear-gradient(135deg, #81c784 0%, #4caf50 100%); }
-        button.month-4 { background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%); }
-        button.month-5 { background: linear-gradient(135deg, #ffee58 0%, #fbc02d 100%); color: #333; }
-        button.month-6 { background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%); }
-        button.month-7 { background: linear-gradient(135deg, #4db6ac 0%, #00897b 100%); }
-        button.month-8 { background: linear-gradient(135deg, #a1887f 0%, #6d4c41 100%); }
-        button.month-9 { background: linear-gradient(135deg, #ff8a65 0%, #e64a19 100%); }
-        button.month-10 { background: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); }
-        button.month-11 { background: linear-gradient(135deg, #4fc3f7 0%, #0277bd 100%); }
-        
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #ffe8d6;
+        /* Widget content */
+        .widget-header {
+            text-align: center;
+            margin-bottom: 20px;
         }
         
         .day-number {
-            font-size: 2.5em;
-            color: #d4845c;
-            font-weight: bold;
+            font-size: 3em;
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 5px;
         }
         
         .date-display {
-            color: #8b7355;
-            font-size: 1.1em;
-            font-style: italic;
-            text-align: right;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+            text-transform: capitalize;
         }
         
-        .theme-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #ffd89b 0%, #ff9a76 100%);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 3px 10px rgba(255, 154, 118, 0.3);
-            font-family: 'Segoe UI', sans-serif;
-            transition: all 0.5s ease;
-        }
-        
-        .theme-badge.month-0 { background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%); }
-        .theme-badge.month-1 { background: linear-gradient(135deg, #f06292 0%, #e91e63 100%); }
-        .theme-badge.month-2 { background: linear-gradient(135deg, #ffd54f 0%, #ffa000 100%); }
-        .theme-badge.month-3 { background: linear-gradient(135deg, #81c784 0%, #4caf50 100%); }
-        .theme-badge.month-4 { background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%); }
-        .theme-badge.month-5 { background: linear-gradient(135deg, #ffee58 0%, #fbc02d 100%); }
-        .theme-badge.month-6 { background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%); }
-        .theme-badge.month-7 { background: linear-gradient(135deg, #4db6ac 0%, #00897b 100%); }
-        .theme-badge.month-8 { background: linear-gradient(135deg, #a1887f 0%, #6d4c41 100%); }
-        .theme-badge.month-9 { background: linear-gradient(135deg, #ff8a65 0%, #e64a19 100%); }
-        .theme-badge.month-10 { background: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); }
-        .theme-badge.month-11 { background: linear-gradient(135deg, #4fc3f7 0%, #0277bd 100%); }
-        
-        .user-greeting {
-            background: linear-gradient(135deg, #fff5eb 0%, #ffe8d6 100%);
-            padding: 18px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            color: #8b4513;
-            font-weight: 600;
-            border: 1px solid #ffe8d6;
-            font-family: 'Segoe UI', sans-serif;
+        .weather-icon {
+            font-size: 3em;
+            margin: 20px 0;
+            animation: float 3s ease-in-out infinite;
         }
         
         .message-box {
-            background: white;
-            border: 2px solid #ffe8d6;
-            border-left: 5px solid #ff9a76;
-            padding: 35px 30px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: center;
             transition: all 0.5s ease;
-            opacity: 0;
-            animation: fadeIn 0.8s ease forwards;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            position: relative;
-        }
-        
-        .message-box.month-0 { border-left-color: #0288d1; border-color: #e0f7fa; }
-        .message-box.month-1 { border-left-color: #e91e63; border-color: #fce4ec; }
-        .message-box.month-2 { border-left-color: #ffa000; border-color: #fff9c4; }
-        .message-box.month-3 { border-left-color: #4caf50; border-color: #e8f5e9; }
-        .message-box.month-4 { border-left-color: #ff9800; border-color: #fff3e0; }
-        .message-box.month-5 { border-left-color: #fbc02d; border-color: #fff8e1; }
-        .message-box.month-6 { border-left-color: #9c27b0; border-color: #f3e5f5; }
-        .message-box.month-7 { border-left-color: #00897b; border-color: #e0f2f1; }
-        .message-box.month-8 { border-left-color: #6d4c41; border-color: #efebe9; }
-        .message-box.month-9 { border-left-color: #e64a19; border-color: #ffe0b2; }
-        .message-box.month-10 { border-left-color: #5d4037; border-color: #d7ccc8; }
-        .message-box.month-11 { border-left-color: #0277bd; border-color: #e1f5fe; }
-        
-        .message-box::before {
-            content: '"';
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            font-size: 4em;
-            color: #ffe8d6;
-            font-family: Georgia, serif;
-        }
-        
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-        
-        .message-box:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(255, 154, 118, 0.2);
-        }
-        
-        .day-icon { 
-            font-size: 2em; 
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
         }
         
         .message-text {
-            color: #4a4a4a;
-            font-size: 1.25em;
-            line-height: 1.8;
-            text-align: center;
-            position: relative;
-            z-index: 1;
+            color: white;
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         
         .hashtag {
-            display: inline-block;
-            margin-top: 15px;
-            color: #ff9a76;
-            font-size: 0.9em;
-            font-weight: 600;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        
-        .reflection-box {
-            background: rgba(255, 250, 240, 0.7);
-            border: 2px dashed #d4845c;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            text-align: left;
-        }
-        
-        .reflection-box label {
             display: block;
-            color: #8b7355;
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 15px;
             font-size: 0.9em;
-            margin-bottom: 10px;
-            font-style: italic;
         }
         
-        .reflection-box textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ffe8d6;
-            border-radius: 8px;
-            font-size: 0.95em;
-            font-family: Georgia, serif;
-            resize: vertical;
-            min-height: 80px;
-            background: white;
-            transition: all 0.3s ease;
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
         }
         
-        .reflection-box textarea:focus {
-            outline: none;
-            border-color: #ff9a76;
-            box-shadow: 0 0 10px rgba(255, 154, 118, 0.2);
+        .birthday-special {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
         }
         
-        .locked-message {
-            color: #999;
-            font-style: italic;
-        }
-        
-        .birthday-message {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-            border: 3px solid #ff9a76;
-            padding: 40px;
-            border-radius: 25px;
-            margin-bottom: 25px;
-            animation: birthday-celebration 2s ease-in-out infinite;
-            box-shadow: 0 15px 50px rgba(255, 215, 0, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .birthday-message::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shine 3s ease-in-out infinite;
-        }
-        
-        @keyframes birthday-celebration {
-            0%, 100% {
-                transform: scale(1) rotate(0deg);
-                box-shadow: 0 15px 50px rgba(255, 215, 0, 0.4);
-            }
-            25% {
-                transform: scale(1.03) rotate(-1deg);
-                box-shadow: 0 20px 60px rgba(255, 215, 0, 0.6);
-            }
-            75% {
-                transform: scale(1.03) rotate(1deg);
-                box-shadow: 0 20px 60px rgba(255, 215, 0, 0.6);
-            }
-        }
-        
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
         
         .birthday-emoji {
-            font-size: 5em;
-            animation: birthday-bounce 1.2s ease-in-out infinite;
-            display: inline-block;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
-        }
-        
-        @keyframes birthday-bounce {
-            0%, 100% { transform: translateY(0) scale(1); }
-            25% { transform: translateY(-30px) scale(1.1) rotate(-5deg); }
-            50% { transform: translateY(0) scale(1.05); }
-            75% { transform: translateY(-15px) scale(1.1) rotate(5deg); }
+            font-size: 3em;
+            margin-bottom: 10px;
         }
         
         .birthday-text {
-            position: relative;
-            z-index: 1;
-            animation: text-glow 2s ease-in-out infinite;
-        }
-        
-        @keyframes text-glow {
-            0%, 100% { text-shadow: 0 0 10px rgba(139, 69, 19, 0.3); }
-            50% { text-shadow: 0 0 20px rgba(139, 69, 19, 0.5), 0 0 30px rgba(255, 215, 0, 0.3); }
-        }
-        
-        .birthday-stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-        
-        .star {
-            position: absolute;
-            font-size: 1.5em;
-            animation: twinkle 1.5s ease-in-out infinite;
-            opacity: 0;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% {
-                opacity: 0;
-                transform: scale(0) rotate(0deg);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.5) rotate(180deg);
-            }
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         
         .confetti {
             position: fixed;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             animation: confetti-fall 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             z-index: 9999;
         }
         
         @keyframes confetti-fall {
             0% {
-                transform: translateY(-100vh) rotate(0deg) scale(1);
+                transform: translateY(-100vh) rotate(0deg);
                 opacity: 1;
             }
             100% {
-                transform: translateY(100vh) rotate(720deg) scale(0.5);
-                opacity: 0.3;
-            }
-        }
-        
-        .balloon {
-            position: absolute;
-            font-size: 2em;
-            animation: float-up 4s ease-in infinite;
-        }
-        
-        @keyframes float-up {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-200px) translateX(30px) rotate(20deg);
+                transform: translateY(100vh) rotate(720deg);
                 opacity: 0;
             }
         }
         
-        .logout-btn {
-            background: linear-gradient(135deg, #ffb3b3 0%, #ff8888 100%);
-            font-size: 0.85em;
-            padding: 10px 22px;
+        .locked-message {
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
         }
         
-        .date-input {
-            padding: 10px 18px;
-            border: 2px solid #d4845c;
-            border-radius: 12px;
-            font-size: 0.95em;
-            width: auto;
+        .reflection-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .reflection-box label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+        
+        .reflection-box textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 0.9em;
+            resize: vertical;
+            min-height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+        
+        .reflection-box textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: white;
         }
     </style>
 </head>
-<body>
-    <div class="weather-indicator" id="weatherIcon">☀️</div>
-    <div class="rain" id="rainContainer"></div>
+<body class="sunny">
+    <div class="weather-effects" id="weatherEffects"></div>
     
-    <div class="container">
+    <div class="widget-container">
         <div id="loginScreen">
             <div class="login-emoji">✨</div>
             <h1>365 Días de Luz</h1>
-            <p class="subtitle">Un año de mensajes que iluminarán tu camino</p>
+            <p class="subtitle">Un mensaje diario para iluminar tu vida</p>
             
             <div class="input-group">
                 <label for="userName">Tu nombre:</label>
@@ -572,62 +458,50 @@
             </div>
             
             <div class="input-group">
-                <label for="userBirthday">Tu fecha de nacimiento:</label>
+                <label for="userBirthday">Tu cumpleaños:</label>
                 <input type="date" id="userBirthday" required>
             </div>
             
-            <button onclick="login()">🎁 Comenzar mi viaje</button>
+            <button onclick="login()">🎁 Comenzar</button>
         </div>
 
-        <div id="calendarScreen" class="hidden">
-            <div class="user-greeting" id="greeting"></div>
-            
-            <div class="page-header">
+        <div id="widgetScreen" class="hidden">
+            <div class="widget-header">
+                <div class="weather-icon" id="weatherIcon">☀️</div>
                 <div class="day-number" id="dayNumber">Día 1</div>
                 <div class="date-display" id="dateDisplay"></div>
             </div>
-
-            <div class="theme-badge" id="themeBadge">Fortaleza y Comienzos</div>
             
             <div id="birthdaySpecial"></div>
             
-            <div class="message-box" id="messageBox">
-                <div class="day-icon" id="dayIcon">💫</div>
+            <div class="message-box">
                 <p class="message-text" id="messageText"></p>
                 <span class="hashtag" id="hashtag">#EresLuz</span>
             </div>
 
             <div class="reflection-box">
-                <label>✍️ ¿Cómo te sientes hoy? (Opcional)</label>
-                <textarea id="reflectionText" placeholder="Escribe aquí tus pensamientos del día..."></textarea>
+                <label>✍️ ¿Cómo te sientes hoy?</label>
+                <textarea id="reflectionText" placeholder="Escribe aquí..."></textarea>
             </div>
             
-            <div>
-                <button onclick="showToday()">📅 Hoy</button>
-                <button onclick="previousDay()">← Anterior</button>
-                <button id="nextBtn" onclick="nextDay()">Siguiente →</button>
+            <div class="navigation">
+                <button class="nav-btn" onclick="previousDay()">← Anterior</button>
+                <button class="nav-btn" onclick="showToday()">📅 Hoy</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextDay()">Siguiente →</button>
             </div>
-            <br>
-            <div>
-                <button onclick="toggleNightMode()">🌙 Modo Noche</button>
-                <button onclick="activateRainMode()">🌧️ Modo Lluvia</button>
-                <button onclick="resetModes()">☀️ Modo Normal</button>
-            </div>
-            <br>
-            <input type="date" id="datePicker" class="date-input" onchange="goToDate()">
-            <br><br>
-            <button class="logout-btn" onclick="logout()">🚪 Cerrar Sesión</button>
         </div>
     </div>
 
     <script>
+        // CONFIGURA TU API KEY DE OPENWEATHER AQUÍ
+        const WEATHER_API_KEY = 'TU_API_KEY_AQUI';
+        
         let currentDate = new Date();
         let userData = null;
         let reflections = {};
-        let isDarkMode = false;
-        let isRaining = false;
+        let currentWeather = 'sunny';
         
-        const phrases = "Tu sonrisa tiene poder, úsala hoy.|😊|No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖|Eres suficiente, incluso en tus días más simples.|✨|Hoy es un buen día para empezar de nuevo.|🌅|Cada paso pequeño cuenta, no lo olvides.|👣|La calma también es progreso.|🌊|Tienes un brillo que nadie puede copiar.|⭐|Lo que haces con amor siempre deja huella.|💝|Respira, vas bien.|🌬️|No corras, las flores no florecen de prisa.|🌸|Mereces todo lo bonito que estás buscando.|🌺|Lo que das, vuelve.|🔄|Eres más fuerte de lo que piensas.|💪|Tu energía cambia los lugares donde vas.|✨|Hoy elige verte con cariño.|💕|Lo estás intentando, y eso ya vale mucho.|🌟|No necesitas validación para ser valiosa.|👑|A veces descansar también es avanzar.|🛏️|Cada día puedes reinventarte un poco.|🦋|Eres luz, aunque no todos lo noten.|💡|No te compares, tu historia es única.|📖|Los días buenos llegan, ten paciencia.|⏳|Agradece lo que tienes, y verás más motivos para sonreír.|🙏|Hoy, elige la paz antes que la prisa.|☮️|Tu voz importa, úsala con amor.|🗣️|Has superado tanto, no lo olvides.|🏔️|Lo mejor aún no ha llegado.|🎁|No necesitas ser más, solo ser tú.|🌈|A veces el alma solo necesita un respiro.|🌬️|Las cosas buenas toman tiempo.|⏰|Tu presencia ya es un regalo.|🎀|Hoy elige ser amable contigo misma.|💗|No te castigues por sentir.|💙|Lo que hoy te pesa, mañana puede enseñarte.|📚|Sigue adelante, incluso si es despacio.|🐢|Cada error te ha acercado a algo valioso.|💎|No apagues tu luz por miedo a brillar.|💫|Tienes tanto por dar.|🎁|No necesitas tener todo claro para avanzar.|🧭|Permítete disfrutar, sin culpa.|🌻|Tu corazón sabe más de lo que imaginas.|❤️|Sonríe, hoy puede ser un buen comienzo.|😊|Las cosas cambian, y tú también puedes hacerlo.|🔄|No subestimes lo lejos que has llegado.|🗺️|Tu bondad es una fuerza.|🌟|No todo tiene que tener sentido ahora.|🌙|Hoy también cuenta, incluso si fue tranquilo.|🍃|Haz espacio para lo que te hace bien.|🏡|Lo simple también puede ser hermoso.|🌿|Confía en el proceso.|🔮|Tienes permiso para descansar.|😴|Hoy puedes elegir ver lo bueno.|👀|No te apures, el sol también tarda en salir.|🌅|Eres capaz, incluso cuando dudas.|💪|No hay prisa para florecer.|🌷|Cada día trae una nueva oportunidad.|🌄|Estás haciendo lo mejor que puedes.|🌟|No necesitas demostrar nada, ya vales.|👑|A veces, solo necesitas respirar profundo.|🌬️|La ternura también es fortaleza.|🌸|Has crecido más de lo que notas.|🌱|Hoy es un buen día para agradecer.|🙏|No te rindas por cansancio, descansa.|😌|Eres parte de algo bonito.|🌺|Aunque no lo veas, estás avanzando.|🚶|Tu forma de cuidar también cuenta.|💞|No temas empezar de cero, ahí nace la fuerza.|🔥|Mereces calma.|🕊️|Tienes un corazón valiente.|💖|Hoy, date crédito por todo lo que lograste.|🏆|No necesitas ser productiva para tener valor.|✨|Eres suficiente, incluso en silencio.|🤫|A veces, la esperanza llega despacio.|🌤️|Tienes derecho a elegir tu propio ritmo.|🎵|La bondad siempre vuelve.|🔄|No todo lo bonito se ve, algunas cosas se sienten.|💫|No estás sola, el mundo también te sostiene.|🌍|Las pequeñas victorias importan.|🎉|Lo que sueñas no es imposible.|🌠|Cree en ti, aunque sea un poquito más.|⭐|Eres más capaz de lo que imaginas.|💪|Hoy, elige no exigirte tanto.|🌼|Agradece tus pasos, incluso los torpes.|👣|Estás aprendiendo, no fallando.|📚|La vida también se disfruta lento.|🐌|No necesitas tener todas las respuestas.|❓|Tu manera de ser ya es hermosa.|🌹|Hoy, suelta lo que no puedas controlar.|🎈|Las cosas buenas también te merecen a ti.|💝|No te olvides de celebrar tus avances.|🎊|El tiempo no cura todo, pero enseña.|⏳|Hoy, si puedes, sonríe un poco más.|😊|Eres un trabajo en progreso, y eso está bien.|🔧|Tu ternura cambia el mundo.|🌎|Nadie más puede ser tú, y eso es tu magia.|✨|Hoy también mereces amor.|❤️|Lo que te hace diferente, te hace brillar.|💎|No todo se mide en resultados.|📊|Permítete sentir orgullo de ti.|🦁|Estás creciendo incluso sin darte cuenta.|🌳|La calma llega cuando confías.|🌊|No apagues tu entusiasmo.|🔥|Tus pasos son valientes, aunque sean pequeños.|👣|Hoy puedes empezar otra vez.|🌅|Eres parte de algo más grande.|🌌|No te sientas mal por necesitar tiempo.|⏰|Cada día te acerca a tu mejor versión.|🦋|Tus sueños también merecen espacio.|💭|Eres un ser de luz, aunque no siempre brilles igual.|💡|No tienes que tenerlo todo bajo control.|🎮|Tienes derecho a descansar sin culpa.|🛌|Tu esfuerzo tiene valor.|🏅|Hoy, elige ser paciente contigo.|⏳|Todo lo que siembras desde el amor florece.|🌻|Eres valiente por seguir intentando.|🦸|Lo importante no es la velocidad, sino el rumbo.|🧭|Eres más constante de lo que crees.|⛰️|A veces rendirse al descanso también es sabio.|😌|No necesitas validación para sentirte bien.|💫|Tu paz vale más que la aprobación.|☮️|Estás aprendiendo a quererte, y eso es hermoso.|💗|La magia está en las cosas pequeñas.|✨|Hoy, agradece lo simple.|🍂|Eres resiliente, aunque no lo notes.|💪|No te olvides de mirar al cielo.|☁️|Lo estás haciendo bien, de verdad.|👍|La felicidad no se busca, se cultiva.|🌱|Hoy, confía un poco más en la vida.|🌈|Eres luz incluso en los días nublados.|🌥️|Tu ternura es un regalo.|🎁|Cada día cuenta, incluso los lentos.|📆|No necesitas ser fuerte todo el tiempo.|🛡️|El descanso también es parte del camino.|🚶|Eres importante, aunque no te lo digan.|⭐|Hoy, elige soltar el peso que no te pertenece.|🎈|Lo que das con amor, vuelve multiplicado.|💕|Estás aprendiendo a vivir, no a rendirte.|🌟|Tu forma de amar hace la diferencia.|💖|Hoy, cree en la posibilidad de cosas buenas.|🌠|Eres más valiente de lo que imaginas.|🦁|No necesitas correr, vas bien.|🚶|La esperanza siempre encuentra el camino.|🌅|No tienes que tener un plan perfecto.|📝|Estás exactamente donde debes estar.|📍|La vida también es esto: intentarlo.|🎯|No te juzgues por tus pausas.|⏸️|Eres un corazón que sigue latiendo, y eso ya es mucho.|💓|Hoy, elige calma en lugar de miedo.|🕊️|Lo que hoy te cuesta, mañana te fortalecerá.|💪|No te rindas, el cambio tarda pero llega.|🌱|Tienes tanto amor dentro, compártelo contigo también.|💝|Estás floreciendo, incluso si no lo notas.|🌺|Hoy, confía en tu camino.|🛤️|Tu existencia ya es suficiente.|✨|No necesitas ser más, solo ser auténtica.|🌟|Eres una historia hermosa en proceso.|📖|A veces lo mejor es simplemente seguir.|➡️|Hoy, abrázate con paciencia.|🤗|Lo estás haciendo bien, aunque no lo veas.|👀|Cada día es una oportunidad para renacer.|🌄|Eres capaz, incluso cuando lo dudas.|💪|Hoy, sonríe aunque no haya motivo.|😊|No te olvides de cuidar tu energía.|⚡|La bondad siempre deja huella.|👣|Eres motivo de inspiración.|💫|Lo que hoy siembras, mañana florece.|🌷|Estás aprendiendo a brillar sin miedo.|✨|No subestimes tu crecimiento.|📈|Hoy, respira y sigue.|🌬️|Eres más fuerte de lo que sientes hoy.|💪|El universo no se ha olvidado de ti.|🌌|Lo estás logrando, poco a poco.|🎯|Hoy, elige la paz por encima del ruido.|🔇|Eres una persona increíble.|🌟|Todo tiene su momento, confía.|⏰|No te castigues por los tropiezos.|🩹|Eres arte, aunque no siempre te veas así.|🎨|Hoy, permite que la vida te sorprenda.|🎁|Eres parte de algo luminoso.|✨|No pierdas la fe en lo que sueñas.|💭|Tu luz guía más de lo que imaginas.|🔦|Hoy, haz algo que te haga bien.|💚|Eres valiosa sin tener que demostrarlo.|💎|Lo que hoy te duele, te está transformando.|🦋|Mereces días suaves.|☁️|Hoy, deja que tu alma respire.|🌬️|Eres suficiente, tal como estás.|✨|No necesitas más, ya tienes lo esencial.|💝|Hoy, date tiempo.|⏳|Estás aprendiendo a quererte con calma.|💗|La ternura también es un acto de fuerza.|🌸|No te compares, tu ritmo es perfecto.|🎵|Eres luz, incluso cuando brillas poquito.|💡|Hoy, agradece lo que sí tienes.|🙏|Tu esencia es hermosa.|🌹|Estás haciendo lo mejor que puedes, y eso basta.|👏|Hoy, respira y confía.|🌬️|Eres un milagro cotidiano.|✨|Lo que sueñas, puede ser real.|🌠|Estás creciendo, incluso en silencio.|🌱|Hoy, elige ver lo bonito.|👁️|Tu paz es prioridad.|☮️|No te olvides de disfrutar el presente.|🎁|Eres un alma fuerte y sensible.|💖|Hoy, da un paso más, sin miedo.|👣|Tu camino tiene sentido.|🛤️|Eres inspiración para más de una persona.|💫|Hoy, confía en tus decisiones.|✔️|La vida también se trata de aprender a soltar.|🎈|Eres suficiente, no necesitas compararte.|⭐|Hoy, celebra tu historia.|🎉|Tienes tanto por descubrir aún.|🔍|Eres capaz de crear belleza con lo que tienes.|🎨|Hoy, abraza tus emociones.|🤗|Estás sanando, incluso si no lo notas.|🩹|Tu esfuerzo no pasa desapercibido.|👀|Hoy, cree un poco más en ti.|💪|Eres más amor que miedo.|❤️|No todo lo bueno tiene que doler.|🌈|Hoy, deja que las cosas fluyan.|🌊|Eres la prueba de que se puede.|🏆|Lo que te hace diferente, te hace única.|💎|Hoy, respira sin prisa.|🌬️|Eres parte de algo bonito, aunque no lo veas.|🌺|Hoy, confía en que todo mejora.|📈|Tu luz no depende del clima.|☀️|Estás aprendiendo a cuidarte.|💚|Hoy, date un momento solo para ti.|🧘|Eres suficiente, incluso en pausa.|⏸️|No todo debe ser perfecto para ser hermoso.|🌸|Hoy, agradece tus avances.|📊|Eres fuerza en calma.|🌊|Hoy, elige amor en lugar de miedo.|💕|Estás creciendo con cada intento.|🌱|Tu ternura cambia el día de alguien.|🌼|Hoy, sonríe sin razón.|😊|Eres resiliente y capaz.|💪|No olvides lo lejos que has llegado.|🗺️|Hoy, deja que la vida te abrace.|🤗|Eres parte de algo que vale la pena.|✨|Hoy, confía en el proceso.|🔄|Estás brillando, aunque no lo notes.|💫|Eres amor en movimiento.|❤️|Hoy, date crédito por seguir.|🏅|Eres más que suficiente.|👑|Hoy, encuentra belleza en lo simple.|🍃|Estás haciendo lo mejor que puedes.|🌟|Eres un recordatorio de esperanza.|🌅|Hoy, suelta la culpa.|🎈|Eres paz, cuando eliges serlo.|☮️|Hoy, abrázate con cariño.|🤗|Eres parte de algo más grande.|🌌|Hoy, confía en ti sin dudar.|💪|Tu alma merece descanso.|😴|Hoy, elige ver el lado bueno.|😊|Eres el sol de muchos días grises.|☀️|Hoy, no te exijas tanto.|🌸|Eres hermosa en todas tus versiones.|🌹|Hoy, permítete sentir sin miedo.|💙|Eres más capaz de lo que piensas.|💪|Hoy, respira y suelta.|🌬️|Tu historia sigue en construcción.|🏗️|Hoy, agradece por existir.|🙏|Eres amor, y eso basta.|❤️|Hoy, recuerda que vales mucho.|💎|Estás aprendiendo a florecer.|🌺|Hoy, confía en tu fuerza.|💪|Eres un corazón valiente.|🦁|Hoy, descansa sin culpa.|😌|Eres capaz de lograr cosas grandes.|🏆|Hoy, busca la calma dentro.|🧘|Eres parte de algo lleno de luz.|✨|Hoy, sonríe a la vida.|😊|Estás haciendo lo correcto para ti.|✔️|Hoy, cree en los finales felices.|🌈|Eres luz para ti y para otros.|💡|Hoy, elige la ternura.|💗|Eres suficiente, siempre.|⭐|Hoy, aprecia lo que ya tienes.|🙏|Eres fuerza y dulzura.|🌸|Hoy, deja que la esperanza te guíe.|🌟|Eres el motivo de un buen recuerdo.|📸|Hoy, sé paciente contigo.|⏳|Eres valiente por seguir aquí.|💪|Hoy, confía en tu intuición.|🔮|Eres alguien que merece amor verdadero.|💖|Hoy, agradece tu camino.|🛤️|Eres inspiración incluso en silencio.|🌙|Hoy, da un paso más con fe.|👣|Eres parte de algo hermoso.|🌺|Hoy, recuerda que puedes empezar otra vez.|🌅|Eres magia sin intentarlo.|✨|Hoy, suelta lo que ya no necesitas.|🎈|Eres motivo de alegría.|😊|Hoy, celebra tu existencia.|🎉|Eres constancia disfrazada de calma.|🌊|Hoy, recuerda que todo pasa.|⏰|Eres más que tus errores.|⭐|Hoy, elige vivir con gratitud.|🙏|Eres luz, incluso cuando no lo creas.|💡|Hoy, date permiso para descansar.|🛌|Eres importante para alguien.|💝|Hoy, suelta el miedo.|🎈|Eres una historia en evolución.|📖|Hoy, confía en los pequeños milagros.|✨|Eres suficiente sin condiciones.|💖|Hoy, cree en tus posibilidades.|🌟|Eres parte de algo bueno.|🌈|Hoy, abraza lo que eres.|🤗|Eres más fuerte que tus dudas.|💪|Hoy, elige amor sobre todo.|❤️|Eres una chispa de esperanza.|✨|Hoy, disfruta lo que haces.|😊|Eres capaz de todo lo que sueñas.|🌠|Hoy, sé amable contigo.|💗|Eres luz en medio de la tormenta.|⛈️|Hoy, agradece lo que aprendiste.|📚|Eres un alma hermosa.|💫|Hoy, confía en el futuro.|🔮|Eres un faro para los demás.|🗼|Hoy, respira y sigue adelante.|🌬️|Eres amor, calma y fuerza.|💪|Hoy, no te olvides de sonreír.|😊|Eres una historia de resiliencia.|📖|Hoy, confía en que todo se acomoda.|🧩|Eres hermosa tal como eres.|🌹|Hoy, elige ver lo bueno en ti.|👁️|Eres la prueba de que la luz vuelve.|🌅|Hoy, suelta lo que pesa.|🎈|Eres parte de algo lleno de sentido.|🌟|Hoy, celebra tus pequeñas victorias.|🎊|Eres un alma en expansión.|🌌|Hoy, elige cuidarte.|💚|Eres todo lo que necesitas ser.|✨|Hoy, cree que mereces cosas buenas.|🎁|Eres más fuerte que tus miedos.|💪|Hoy, agradece el presente.|🎁|Eres un corazón lleno de amor.|❤️|Hoy, descansa sin remordimientos.|😴|Eres única y eso te hace especial.|💎|Hoy, sigue creyendo en ti.|⭐|Eres la calma que buscas.|🌊|Hoy, confía en el tiempo.|⏰|Eres capaz de volver a empezar.|🌅|Hoy, deja que la vida fluya.|🌊|Eres digna de amor, siempre.|💖|Hoy, agradece lo que fuiste y lo que eres.|🙏|Eres una promesa cumplida.|✅|Hoy, confía en el poder de lo simple.|🍃|Eres el abrazo que el mundo necesita.|🤗|Hoy, deja espacio para la esperanza.|🌟|Eres un recordatorio de bondad.|💝|Hoy, vive con ligereza.|🎈|Eres todo lo que necesitas ser.|✨|Hoy, elige paz.|☮️|Eres más valiente de lo que crees.|🦁|Hoy, confía en tu proceso.|🔄|Eres amor en forma humana.|💗|Hoy, sonríe por lo lejos que has llegado.|😊|Eres una historia digna de orgullo.|📖|Hoy, agradece por ti.|🙏|Eres la prueba de que se puede.|🏆|Hoy, confía en que todo saldrá bien.|🌈|Eres suficiente, y siempre lo serás.|⭐";
+        const phrases = "Tu sonrisa tiene poder, úsala hoy.|😊|No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖|Eres suficiente, incluso en tus días más simples.|✨|Hoy es un buen día para empezar de nuevo.|🌅|Cada paso pequeño cuenta, no lo olvides.|👣|La calma también es progreso.|🌊|Tienes un brillo que nadie puede copiar.|⭐|Lo que haces con amor siempre deja huella.|💝|Respira, vas bien.|🌬️|No corras, las flores no florecen de prisa.|🌸|Mereces todo lo bonito que estás buscando.|🌺|Lo que das, vuelve.|🔄|Eres más fuerte de lo que piensas.|💪|Tu energía cambia los lugares donde vas.|✨|Hoy elige verte con cariño.|💕|Lo estás intentando, y eso ya vale mucho.|🌟|No necesitas validación para ser valiosa.|👑|A veces descansar también es avanzar.|🛏️|Cada día puedes reinventarte un poco.|🦋|Eres luz, aunque no todos lo noten.|💡|Tu historia es única.|📖|Los días buenos llegan.|⏳|Agradece lo que tienes.|🙏|Elige la paz.|☮️|Tu voz importa.|🗣️|Has superado tanto.|🏔️|Lo mejor está por venir.|🎁|Sé tú misma.|🌈|El alma necesita descanso.|🌬️|Las cosas buenas toman tiempo.|⏰|Tu presencia es un regalo.|🎀|Sé amable contigo.|💗|No te castigues por sentir.|💙|Hoy puede enseñarte.|📚|Sigue adelante.|🐢|Los errores te fortalecen.|💎|No apagues tu luz.|💫|Tienes tanto por dar.|🎁|No necesitas claridad total.|🧭|Disfruta sin culpa.|🌻|Tu corazón sabe.|❤️|Sonríe hoy.|😊|Puedes cambiar.|🔄|Has llegado lejos.|🗺️|Tu bondad es fuerza.|🌟|No todo debe tener sentido.|🌙|Hoy cuenta.|🍃|Haz espacio para el bien.|🏡|Lo simple es hermoso.|🌿|Confía en el proceso.|🔮|Descansa.|😴|Elige ver lo bueno.|👀|El sol tarda en salir.|🌅|Eres capaz.|💪|No hay prisa.|🌷|Cada día es nuevo.|🌄|Lo estás haciendo bien.|🌟|Ya vales.|👑|Respira profundo.|🌬️|La ternura es fortaleza.|🌸|Has crecido.|🌱|Agradece.|🙏|Descansa si te cansas.|😌|Eres parte de algo bonito.|🌺|Estás avanzando.|🚶|Tu cuidado cuenta.|💞|Empezar de cero es valiente.|🔥|Mereces calma.|🕊️|Corazón valiente.|💖|Date crédito.|🏆|No necesitas producir.|✨|Eres suficiente en silencio.|🤫|La esperanza llega.|🌤️|Elige tu ritmo.|🎵|La bondad vuelve.|🔄|Algunas cosas se sienten.|💫|El mundo te sostiene.|🌍|Las victorias pequeñas importan.|🎉|Puedes soñar.|🌠|Cree en ti.|⭐|Eres capaz.|💪|No te exijas tanto.|🌼|Agradece tus pasos.|👣|Estás aprendiendo.|📚|Disfruta lento.|🐌|No necesitas todas las respuestas.|❓|Ya eres hermosa.|🌹|Suelta el control.|🎈|Mereces lo bueno.|💝|Celebra tus avances.|🎊|El tiempo enseña.|⏳|Sonríe más.|😊|Eres un proceso.|🔧|Tu ternura cambia.|🌎|Nadie más es tú.|✨|Mereces amor.|❤️|Eres diferente y brillante.|💎|No todo se mide.|📊|Siente orgullo.|🦁|Estás creciendo.|🌳|La calma llega.|🌊|No apagues tu entusiasmo.|🔥|Tus pasos son valientes.|👣|Puedes empezar otra vez.|🌅|Eres parte de algo grande.|🌌|Necesitar tiempo está bien.|⏰|Cada día te acerca.|🦋|Tus sueños merecen espacio.|💭|Eres luz.|💡|No controles todo.|🎮|Descansa sin culpa.|🛌|Tu esfuerzo vale.|🏅|Sé paciente contigo.|⏳|El amor florece.|🌻|Eres valiente.|🦸|El rumbo importa.|🧭|Eres constante.|⛰️|Descansar es sabio.|😌|No necesitas validación.|💫|Tu paz vale más.|☮️|Aprendes a quererte.|💗|La magia está en lo pequeño.|✨|Agradece lo simple.|🍂|Eres resiliente.|💪|Mira al cielo.|☁️|Lo haces bien.|👍|La felicidad se cultiva.|🌱|Confía en la vida.|🌈|Eres luz siempre.|🌥️|Tu ternura es regalo.|🎁|Cada día cuenta.|📆|No siempre debes ser fuerte.|🛡️|El descanso es parte.|🚶|Eres importante.|⭐|Suelta el peso.|🎈|El amor vuelve.|💕|Aprendes a vivir.|🌟|Tu forma de amar importa.|💖|Cree en lo bueno.|🌠|Eres valiente.|🦁|Vas bien.|🚶|La esperanza encuentra camino.|🌅|No necesitas plan perfecto.|📝|Estás donde debes.|📍|La vida es intentarlo.|🎯|No juzgues tus pausas.|⏸️|Tu corazón late.|💓|Elige calma.|🕊️|Hoy te fortalece.|💪|El cambio llega.|🌱|Comparte amor contigo.|💝|Estás floreciendo.|🌺|Confía en tu camino.|🛤️|Tu existencia es suficiente.|✨|Sé auténtica.|🌟|Eres historia hermosa.|📖|Simplemente sigue.|➡️|Abrázate con paciencia.|🤗|Lo haces bien.|👀|Cada día renace.|🌄|Eres capaz siempre.|💪|Sonríe.|😊|Cuida tu energía.|⚡|La bondad deja huella.|👣|Eres inspiración.|💫|Hoy siembras mañana.|🌷|Aprende a brillar.|✨|No subestimes tu crecimiento.|📈|Respira y sigue.|🌬️|Eres fuerte.|💪|El universo te recuerda.|🌌|Lo logras poco a poco.|🎯|Elige paz.|🔇|Eres increíble.|🌟|Todo tiene momento.|⏰|No te castigues.|🩹|Eres arte.|🎨|Déjate sorprender.|🎁|Eres luminosa.|✨|No pierdas la fe.|💭|Tu luz guía.|🔦|Haz algo bueno.|💚|Eres valiosa.|💎|Hoy te transforma.|🦋|Mereces suavidad.|☁️|Deja respirar tu alma.|🌬️|Eres suficiente.|✨|Ya tienes lo esencial.|💝|Date tiempo.|⏳|Te quieres con calma.|💗|La ternura es fuerza.|🌸|Tu ritmo es perfecto.|🎵|Eres luz siempre.|💡|Agradece lo que tienes.|🙏|Tu esencia es hermosa.|🌹|Lo haces lo mejor.|👏|Respira y confía.|🌬️|Eres milagro.|✨|Los sueños son reales.|🌠|Creces en silencio.|🌱|Elige ver bonito.|👁️|Tu paz es prioridad.|☮️|Disfruta el presente.|🎁|Alma fuerte y sensible.|💖|Da un paso más.|👣|Tu camino tiene sentido.|🛤️|Eres inspiración.|💫|Confía en tus decisiones.|✔️|Aprende a soltar.|🎈|Eres suficiente.|⭐|Celebra tu historia.|🎉|Descubre más.|🔍|Crea belleza.|🎨|Abraza emociones.|🤗|Estás sanando.|🩹|Tu esfuerzo se ve.|👀|Cree más en ti.|💪|Eres amor.|❤️|Lo bueno no duele.|🌈|Deja fluir.|🌊|Puedes lograrlo.|🏆|Eres única.|💎|Respira sin prisa.|🌬️|Eres bonita.|🌺|Todo mejora.|📈|Tu luz no depende del clima.|☀️|Aprendes a cuidarte.|💚|Date un momento.|🧘|Eres suficiente en pausa.|⏸️|No todo es perfecto.|🌸|Agradece avances.|📊|Eres fuerza en calma.|🌊|Elige amor.|💕|Creces con intentos.|🌱|Tu ternura cambia días.|🌼|Sonríe sin razón.|😊|Eres resiliente.|💪|Recuerda lo lejos.|🗺️|Déjate abrazar.|🤗|Vale la pena.|✨|Confía en el proceso.|🔄|Estás brillando.|💫|Eres amor en movimiento.|❤️|Date crédito.|🏅|Eres más que suficiente.|👑|Encuentra belleza simple.|🍃|Lo haces genial.|🌟|Eres esperanza.|🌅|Suelta culpa.|🎈|Eres paz.|☮️|Abrázate con cariño.|🤗|Eres parte grande.|🌌|Confía sin dudar.|💪|Tu alma merece descanso.|😴|Ve el lado bueno.|😊|Eres el sol.|☀️|No te exijas.|🌸|Eres hermosa siempre.|🌹|Siente sin miedo.|💙|Eres más capaz.|💪|Respira y suelta.|🌬️|Tu historia se construye.|🏗️|Agradece existir.|🙏|Eres amor.|❤️|Vales mucho.|💎|Aprendes a florecer.|🌺|Confía en fuerza.|💪|Corazón valiente.|🦁|Descansa sin culpa.|😌|Logras cosas grandes.|🏆|Busca calma dentro.|🧘|Eres luz llena.|✨|Sonríe a la vida.|😊|Haces lo correcto.|✔️|Cree en finales felices.|🌈|Eres luz para todos.|💡|Elige ternura.|💗|Eres suficiente siempre.|⭐|Aprecia lo que tienes.|🙏|Eres fuerza y dulzura.|🌸|Deja que esperanza guíe.|🌟|Eres buen recuerdo.|📸|Sé paciente.|⏳|Eres valiente aquí.|💪|Confía intuición.|🔮|Mereces amor verdadero.|💖|Agradece camino.|🛤️|Eres inspiración silenciosa.|🌙|Da paso con fe.|👣|Eres parte hermosa.|🌺|Puedes empezar otra vez.|🌅|Eres magia.|✨|Suelta lo viejo.|🎈|Eres alegría.|😊|Celebra existencia.|🎉|Eres constancia.|🌊|Todo pasa.|⏰|Eres más que errores.|⭐|Vive con gratitud.|🙏|Eres luz creyendo.|💡|Descansa.|🛌|Eres importante para alguien.|💝|Suelta miedo.|🎈|Eres historia evolutiva.|📖|Confía milagros.|✨|Eres suficiente sin condiciones.|💖|Cree posibilidades.|🌟|Eres parte buena.|🌈|Abraza lo que eres.|🤗|Eres fuerte que dudas.|💪|Elige amor todo.|❤️|Eres chispa esperanza.|✨|Disfruta lo haces.|😊|Eres capaz soñar.|🌠|Sé amable contigo.|💗|Eres luz tormenta.|⛈️|Agradece aprendido.|📚|Eres alma hermosa.|💫|Confía futuro.|🔮|Eres faro demás.|🗼|Respira sigue.|🌬️|Eres amor calma fuerza.|💪|No olvides sonreír.|😊|Eres resiliencia.|📖|Todo se acomoda.|🧩|Eres hermosa eres.|🌹|Ve bueno en ti.|👁️|Eres prueba luz vuelve.|🌅|Suelta pesa.|🎈|Eres sentido.|🌟|Celebra victorias.|🎊|Eres expansión.|🌌|Elige cuidarte.|💚|Eres todo necesitas.|✨|Mereces cosas buenas.|🎁|Eres fuerte miedos.|💪|Agradece presente.|🎁|Eres corazón amor.|❤️|Descansa sin remordimientos.|😴|Eres única especial.|💎|Sigue creyendo.|⭐|Eres calma buscas.|🌊|Confía tiempo.|⏰|Puedes volver empezar.|🌅|Deja vida fluir.|🌊|Eres digna amor.|💖|Agradece fuiste eres.|🙏|Eres promesa cumplida.|✅|Confía poder simple.|🍃|Eres abrazo mundo.|🤗|Deja espacio esperanza.|🌟|Eres recordatorio bondad.|💝|Vive ligereza.|🎈|Eres todo necesitas.|✨|Elige paz.|☮️|Eres valiente crees.|🦁|Confía proceso.|🔄|Eres amor humano.|💗|Sonríe lejos llegaste.|😊|Eres historia orgullo.|📖|Agradece por ti.|🙏|Eres prueba puede.|🏆|Todo saldrá bien.|🌈|Eres suficiente siempre serás.|⭐";
         
         const messages = phrases.split('|').reduce((acc, item, index, arr) => {
             if (index % 2 === 0 && arr[index + 1]) {
@@ -636,76 +510,147 @@
             return acc;
         }, []);
 
-        const monthlyThemes = [
-            { month: 0, name: "Fortaleza y Comienzos", icon: "🌅" },
-            { month: 1, name: "Cariño y Gratitud", icon: "💝" },
-            { month: 2, name: "Sueños y Metas", icon: "🌟" },
-            { month: 3, name: "Renovación y Crecimiento", icon: "🌱" },
-            { month: 4, name: "Alegría y Celebración", icon: "🎉" },
-            { month: 5, name: "Luz y Energía", icon: "☀️" },
-            { month: 6, name: "Libertad y Aventura", icon: "🦋" },
-            { month: 7, name: "Reflexión y Paz", icon: "🌊" },
-            { month: 8, name: "Sabiduría y Aprendizaje", icon: "📚" },
-            { month: 9, name: "Cosecha y Abundancia", icon: "🍂" },
-            { month: 10, name: "Agradecimiento", icon: "🙏" },
-            { month: 11, name: "Magia y Esperanza", icon: "✨" }
-        ];
-
         const hashtags = ["#EresLuz", "#DíaBrillante", "#MotivoDeAlegría", "#TuEsencia", "#EnergíaPositiva", "#ValorInterior", "#BrillaPorTi", "#TúImportas", "#AmorPropio", "#FuerzaInterior", "#CadaDíaCuenta", "#TúBrillas", "#AlmaHermosa", "#TuPresencia", "#EresMagia", "#TuVoz", "#CorazónValiente", "#EsenciaÚnica", "#TuSonrisa", "#GraciasPorSer"];
 
-        function checkTimeAndApplyMode() {
+        // Detectar clima según la hora y API
+        async function detectWeather() {
             const hour = new Date().getHours();
+            
+            // Modo nocturno automático (8pm - 6am)
             if (hour >= 20 || hour < 6) {
-                document.body.classList.add('night-mode');
-                document.getElementById('weatherIcon').textContent = '🌙';
-                document.getElementById('themeColor').setAttribute('content', '#2c3e50');
+                applyWeatherTheme('night');
+                return;
+            }
+            
+            // Intentar obtener clima real si hay API key
+            if (WEATHER_API_KEY !== 'TU_API_KEY_AQUI') {
+                try {
+                    const pos = await getCurrentPosition();
+                    const response = await fetch(
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${pos.latitude}&lon=${pos.longitude}&appid=${WEATHER_API_KEY}`
+                    );
+                    const data = await response.json();
+                    
+                    // Detectar si está lloviendo
+                    const weatherCode = data.weather[0].id;
+                    if (weatherCode >= 200 && weatherCode < 600) {
+                        applyWeatherTheme('rainy');
+                        return;
+                    }
+                } catch (error) {
+                    console.log('No se pudo obtener el clima, usando modo soleado');
+                }
+            }
+            
+            // Por defecto: soleado
+            applyWeatherTheme('sunny');
+        }
+        
+        function getCurrentPosition() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation not supported'));
+                } else {
+                    navigator.geolocation.getCurrentPosition(
+                        position => resolve({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        }),
+                        error => reject(error)
+                    );
+                }
+            });
+        }
+        
+        function applyWeatherTheme(weather) {
+            currentWeather = weather;
+            document.body.className = weather;
+            
+            const effectsContainer = document.getElementById('weatherEffects');
+            effectsContainer.innerHTML = '';
+            
+            if (weather === 'sunny') {
+                document.getElementById('themeColor').setAttribute('content', '#87CEEB');
+                createSun(effectsContainer);
+                createClouds(effectsContainer, 3);
+            } else if (weather === 'night') {
+                document.getElementById('themeColor').setAttribute('content', '#0B1026');
+                createMoon(effectsContainer);
+                createStars(effectsContainer, 50);
+            } else if (weather === 'rainy') {
+                document.getElementById('themeColor').setAttribute('content', '#4A5568');
+                createRain(effectsContainer, 100);
+                createLightning(effectsContainer);
+                createClouds(effectsContainer, 5, true);
             }
         }
-
-        function toggleNightMode() {
-            isDarkMode = !isDarkMode;
-            if (isDarkMode) {
-                document.body.classList.add('night-mode');
-                document.getElementById('weatherIcon').textContent = '🌙';
-                document.getElementById('themeColor').setAttribute('content', '#2c3e50');
-            } else {
-                document.body.classList.remove('night-mode');
-                document.getElementById('weatherIcon').textContent = '☀️';
-                document.getElementById('themeColor').setAttribute('content', '#ffecd2');
+        
+        function createSun(container) {
+            const sun = document.createElement('div');
+            sun.className = 'sun';
+            container.appendChild(sun);
+        }
+        
+        function createMoon(container) {
+            const moon = document.createElement('div');
+            moon.className = 'moon';
+            container.appendChild(moon);
+        }
+        
+        function createStars(container, count) {
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
             }
         }
-
-        function activateRainMode() {
-            isRaining = true;
-            document.body.classList.add('rainy-mode');
-            document.getElementById('weatherIcon').textContent = '🌧️';
-            const rainContainer = document.getElementById('rainContainer');
-            rainContainer.innerHTML = '';
-            for (let i = 0; i < 100; i++) {
+        
+        function createClouds(container, count, dark = false) {
+            for (let i = 0; i < count; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                cloud.style.width = Math.random() * 100 + 80 + 'px';
+                cloud.style.height = Math.random() * 40 + 30 + 'px';
+                cloud.style.top = Math.random() * 30 + 10 + '%';
+                cloud.style.left = -200 + 'px';
+                cloud.style.animationDuration = Math.random() * 40 + 40 + 's';
+                cloud.style.animationDelay = Math.random() * 20 + 's';
+                if (dark) {
+                    cloud.style.background = 'rgba(100, 100, 120, 0.6)';
+                    if (cloud.querySelector('::before')) cloud.querySelector('::before').style.background = 'rgba(100, 100, 120, 0.6)';
+                    if (cloud.querySelector('::after')) cloud.querySelector('::after').style.background = 'rgba(100, 100, 120, 0.6)';
+                }
+                container.appendChild(cloud);
+            }
+        }
+        
+        function createRain(container, count) {
+            for (let i = 0; i < count; i++) {
                 const drop = document.createElement('div');
                 drop.className = 'raindrop';
                 drop.style.left = Math.random() * 100 + '%';
-                drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+                drop.style.animationDuration = Math.random() * 0.5 + 0.5 + 's';
                 drop.style.animationDelay = Math.random() * 2 + 's';
-                rainContainer.appendChild(drop);
+                container.appendChild(drop);
             }
         }
-
-        function resetModes() {
-            isRaining = false;
-            isDarkMode = false;
-            document.body.classList.remove('rainy-mode', 'night-mode');
-            document.getElementById('weatherIcon').textContent = '☀️';
-            document.getElementById('rainContainer').innerHTML = '';
-            document.getElementById('themeColor').setAttribute('content', '#ffecd2');
-            checkTimeAndApplyMode();
+        
+        function createLightning(container) {
+            const lightning = document.createElement('div');
+            lightning.className = 'lightning';
+            container.appendChild(lightning);
         }
-
+        
         function getDayOfYear(date) {
             const start = new Date(date.getFullYear(), 0, 1);
             return Math.floor((date - start) / 86400000) + 1;
         }
-
+        
         function isBirthday(date, birthdayDate) {
             const checkDate = new Date(date.getTime());
             const birthDate = new Date(birthdayDate.getTime());
@@ -713,63 +658,24 @@
             birthDate.setHours(12, 0, 0, 0);
             return checkDate.getMonth() === birthDate.getMonth() && checkDate.getDate() === birthDate.getDate();
         }
-
+        
         function createConfetti() {
-            const colors = ['#ff9a76', '#ffd700', '#ff69b4', '#87ceeb', '#98fb98', '#ffb6c1', '#dda0dd', '#f0e68c'];
-            const shapes = ['●', '■', '▲', '★', '♥', '♦'];
-            for (let i = 0; i < 200; i++) {
+            const colors = ['#ff9a76', '#ffd700', '#ff69b4', '#87ceeb', '#98fb98', '#ffb6c1'];
+            const shapes = ['●', '■', '▲', '★'];
+            for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     const confetti = document.createElement('div');
                     confetti.className = 'confetti';
                     confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
                     confetti.style.left = Math.random() * 100 + '%';
                     confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.fontSize = (Math.random() * 20 + 15) + 'px';
-                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                    confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    confetti.style.animationDuration = Math.random() * 2 + 3 + 's';
                     document.body.appendChild(confetti);
                     setTimeout(() => confetti.remove(), 5000);
-                }, i * 15);
+                }, i * 20);
             }
         }
-
-        function createBalloons() {
-            const balloonEmojis = ['🎈', '🎈', '🎈', '🎊', '🎉'];
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => {
-                    const balloon = document.createElement('div');
-                    balloon.className = 'balloon';
-                    balloon.textContent = balloonEmojis[Math.floor(Math.random() * balloonEmojis.length)];
-                    balloon.style.left = Math.random() * 100 + '%';
-                    balloon.style.bottom = '-50px';
-                    balloon.style.animationDelay = Math.random() * 2 + 's';
-                    balloon.style.animationDuration = (Math.random() * 2 + 3) + 's';
-                    document.getElementById('birthdaySpecial').appendChild(balloon);
-                    setTimeout(() => balloon.remove(), 6000);
-                }, i * 400);
-            }
-        }
-
-        function createStars(container) {
-            const starPositions = [
-                { top: '10%', left: '10%', delay: '0s' },
-                { top: '20%', left: '85%', delay: '0.3s' },
-                { top: '70%', left: '15%', delay: '0.6s' },
-                { top: '65%', left: '80%', delay: '0.9s' },
-                { top: '40%', left: '5%', delay: '1.2s' },
-                { top: '35%', left: '90%', delay: '1.5s' }
-            ];
-            starPositions.forEach(pos => {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.textContent = '✨';
-                star.style.top = pos.top;
-                star.style.left = pos.left;
-                star.style.animationDelay = pos.delay;
-                container.appendChild(star);
-            });
-        }
-
+        
         function login() {
             const name = document.getElementById('userName').value;
             const birthdayInput = document.getElementById('userBirthday').value;
@@ -780,22 +686,11 @@
             
             userData = {name, birthday};
             document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('calendarScreen').classList.remove('hidden');
-            document.getElementById('greeting').textContent = `Hola, ${name} 🌸`;
-            checkTimeAndApplyMode();
+            document.getElementById('widgetScreen').classList.remove('hidden');
+            detectWeather();
             updateDisplay();
         }
-
-        function logout() {
-            userData = null;
-            currentDate = new Date();
-            reflections = {};
-            document.getElementById('calendarScreen').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('userName').value = '';
-            document.getElementById('userBirthday').value = '';
-        }
-
+        
         function updateDisplay() {
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -804,19 +699,23 @@
             
             const dayOfYear = getDayOfYear(currentDate);
             const message = messages[dayOfYear - 1] || messages[0];
-            const currentMonth = currentDate.getMonth();
-            const theme = monthlyThemes.find(t => t.month === currentMonth);
             
             document.getElementById('dayNumber').textContent = `Día ${dayOfYear}`;
-            document.getElementById('dateDisplay').textContent = currentDate.toLocaleDateString('es-ES', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
-            document.getElementById('themeBadge').textContent = `${theme.icon} ${theme.name}`;
-            document.getElementById('themeBadge').className = `theme-badge month-${currentMonth}`;
-            document.getElementById('messageBox').className = `message-box month-${currentMonth}`;
-            document.getElementById('datePicker').valueAsDate = currentDate;
-            document.body.className = `month-${currentMonth}`;
+            document.getElementById('dateDisplay').textContent = currentDate.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
             
-            const buttons = document.querySelectorAll('button:not(.logout-btn)');
-            buttons.forEach(btn => btn.className = `month-${currentMonth}`);
+            // Icono según clima
+            if (currentWeather === 'sunny') {
+                document.getElementById('weatherIcon').textContent = '☀️';
+            } else if (currentWeather === 'night') {
+                document.getElementById('weatherIcon').textContent = '🌙';
+            } else if (currentWeather === 'rainy') {
+                document.getElementById('weatherIcon').textContent = '🌧️';
+            }
             
             const dateKey = selected.toDateString();
             document.getElementById('reflectionText').value = reflections[dateKey] || '';
@@ -825,34 +724,23 @@
             
             if (userData && isBirthday(selected, userData.birthday)) {
                 createConfetti();
-                createBalloons();
                 birthdaySpecial.innerHTML = `
-                    <div class="birthday-message">
-                        <div class="birthday-stars"></div>
+                    <div class="birthday-special">
                         <div class="birthday-emoji">🎂</div>
-                        <h2 class="birthday-text" style="color: #8b4513; margin: 20px 0; font-size: 2.2em;">¡FELIZ CUMPLEAÑOS, ${userData.name.toUpperCase()}!</h2>
-                        <p class="birthday-text" style="font-size: 1.4em; color: #8b4513; margin: 15px 0;">🎉 Este es tu día especial 🎉</p>
-                        <p class="birthday-text" style="margin-top: 15px; color: #8b4513; font-style: italic; font-size: 1.1em;">Que todos tus sueños se hagan realidad ✨</p>
-                        <p class="birthday-text" style="margin-top: 15px; color: #8b4513; font-size: 1.1em;">El mundo celebra tu existencia hoy 🌟</p>
-                        <div style="margin-top: 25px; font-size: 2em;">🎊 🎁 🎈 🎉 🎂</div>
+                        <div class="birthday-text">¡FELIZ CUMPLEAÑOS ${userData.name.toUpperCase()}!</div>
+                        <div style="margin-top: 10px; font-size: 0.9em; color: white;">🎉 Que todos tus sueños se hagan realidad ✨</div>
                     </div>
                 `;
-                setTimeout(() => {
-                    const starsContainer = birthdaySpecial.querySelector('.birthday-stars');
-                    if (starsContainer) createStars(starsContainer);
-                }, 100);
             } else {
                 birthdaySpecial.innerHTML = '';
             }
             
             if (selected > today) {
-                document.getElementById('dayIcon').textContent = '🔒';
-                document.getElementById('messageText').innerHTML = '<span class="locked-message">Este mensaje estará disponible cuando llegue este día especial. ¡Ten paciencia! 💖</span>';
+                document.getElementById('messageText').innerHTML = '<span class="locked-message">🔒 Este mensaje estará disponible cuando llegue este día.</span>';
                 document.getElementById('hashtag').textContent = '#ProntoLlegará';
                 document.getElementById('nextBtn').disabled = true;
                 document.getElementById('reflectionText').disabled = true;
             } else {
-                document.getElementById('dayIcon').textContent = message.icon;
                 document.getElementById('messageText').textContent = message.text;
                 document.getElementById('hashtag').textContent = hashtags[dayOfYear % hashtags.length];
                 document.getElementById('reflectionText').disabled = false;
@@ -861,50 +749,41 @@
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 document.getElementById('nextBtn').disabled = tomorrow > today;
             }
-            
-            const msgBox = document.getElementById('messageBox');
-            msgBox.style.animation = 'none';
-            setTimeout(() => msgBox.style.animation = 'fadeIn 0.8s ease forwards', 10);
         }
-
+        
         document.getElementById('reflectionText').addEventListener('input', function() {
             const dateKey = new Date(currentDate).toDateString();
             reflections[dateKey] = this.value;
         });
-
+        
         function showToday() {
             currentDate = new Date();
+            detectWeather();
             updateDisplay();
         }
-
+        
         function previousDay() {
             currentDate.setDate(currentDate.getDate() - 1);
             updateDisplay();
         }
-
+        
         function nextDay() {
             currentDate.setDate(currentDate.getDate() + 1);
             updateDisplay();
         }
-
-        function goToDate() {
-            const selected = document.getElementById('datePicker').valueAsDate;
-            if (selected) {
-                currentDate = new Date(selected);
-                currentDate.setHours(12);
-                updateDisplay();
-            }
-        }
-
+        
+        // Detectar clima cada 10 minutos
+        setInterval(detectWeather, 600000);
+        
+        // Aplicar tema inicial
+        detectWeather();
+        
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('Service Worker registrado'))
                     .catch(err => console.log('Service Worker no disponible'));
             });
         }
-        
-        checkTimeAndApplyMode();
     </script>
 </body>
 </html>
