@@ -761,23 +761,30 @@
         /* Panel de diagnóstico */
         .debug-panel {
             position: fixed;
-            bottom: 10px;
+            bottom: 70px;
             left: 10px;
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.75em;
-            max-width: 90%;
-            z-index: 999;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 9999;
             font-family: monospace;
-            line-height: 1.4;
+            line-height: 1.6;
             display: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
         
         .debug-panel.show {
             display: block;
         }
+        
+        .debug-panel::-webkit-scrollbar { width: 6px; }
+        .debug-panel::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); }
+        .debug-panel::-webkit-scrollbar-thumb { background: rgba(0, 255, 0, 0.5); border-radius: 3px; }
         
         .debug-toggle {
             position: fixed;
@@ -791,8 +798,15 @@
             border-radius: 50%;
             font-size: 1.2em;
             cursor: pointer;
-            z-index: 1000;
+            z-index: 10000;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .debug-toggle:active {
+            transform: scale(0.95);
         }
         
         .theme-selector {
@@ -1617,7 +1631,7 @@
                 document.getElementById('nextBtn').disabled = tomorrow > today;
             }
             
-        renderNotes();
+            renderNotes();
         }
         
         function showToday() {
