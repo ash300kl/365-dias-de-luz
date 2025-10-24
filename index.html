@@ -758,6 +758,101 @@
         
         .add-subnote-btn:hover { background: rgba(167, 139, 250, 0.3); }
         
+        /* Panel de diagnóstico */
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            max-width: 90%;
+            z-index: 999;
+            font-family: monospace;
+            line-height: 1.4;
+            display: none;
+        }
+        
+        .debug-panel.show {
+            display: block;
+        }
+        
+        .debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(139, 92, 246, 0.9);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .theme-selector {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+        }
+        
+        body.night .theme-selector {
+            background: rgba(44, 62, 80, 0.95);
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+        
+        body.rainy .theme-selector {
+            background: rgba(71, 85, 105, 0.95);
+            border-color: rgba(147, 197, 253, 0.4);
+        }
+        
+        .theme-selector h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        body.night .theme-selector h4 { color: #fbbf24; }
+        body.rainy .theme-selector h4 { color: #93c5fd; }
+        
+        .theme-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .theme-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-btn:hover {
+            transform: scale(1.05);
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+        
+        .theme-btn.active {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            color: white;
+            border-color: #8b5cf6;
+        }
+        
         /* Modal de Notas */
         .notes-modal {
             display: none;
@@ -885,6 +980,12 @@
 <body class="sunny">
     <div class="weather-effects" id="weatherEffects"></div>
     
+    <!-- Botón de debug -->
+    <button class="debug-toggle" onclick="toggleDebug()">🔧</button>
+    
+    <!-- Panel de diagnóstico -->
+    <div class="debug-panel" id="debugPanel"></div>
+    
     <!-- Modal de Notas -->
     <div class="notes-modal" id="notesModal" onclick="closeNotesModal(event)">
         <div class="notes-modal-content" onclick="event.stopPropagation()">
@@ -944,6 +1045,16 @@
                 📝 Abrir Mis Notas
             </button>
             
+            <div class="theme-selector">
+                <h4>🎨 Cambiar tema manualmente</h4>
+                <div class="theme-buttons">
+                    <button class="theme-btn" onclick="manualThemeChange('sunny')" id="btn-sunny">☀️ Soleado</button>
+                    <button class="theme-btn" onclick="manualThemeChange('rainy')" id="btn-rainy">🌧️ Lluvia</button>
+                    <button class="theme-btn" onclick="manualThemeChange('night')" id="btn-night">🌙 Noche</button>
+                    <button class="theme-btn" onclick="manualThemeChange('auto')" id="btn-auto">🤖 Auto</button>
+                </div>
+            </div>
+            
             <div class="navigation">
                 <button class="nav-btn" onclick="previousDay()">← Anterior</button>
                 <button class="nav-btn" onclick="showToday()">📅 Hoy</button>
@@ -964,6 +1075,49 @@
         let reflections = {};
         let currentWeather = 'sunny';
         let notes = {};
+        let debugLogs = [];
+        let manualTheme = null;
+        
+        function addDebugLog(message) {
+            debugLogs.push(message);
+            updateDebugPanel();
+        }
+        
+        function updateDebugPanel() {
+            const panel = document.getElementById('debugPanel');
+            if (panel) {
+                panel.innerHTML = debugLogs.slice(-15).join('<br>');
+            }
+        }
+        
+        function toggleDebug() {
+            const panel = document.getElementById('debugPanel');
+            panel.classList.toggle('show');
+        }
+        
+        function manualThemeChange(theme) {
+            if (theme === 'auto') {
+                manualTheme = null;
+                addDebugLog('🤖 Modo automático activado');
+                detectWeather();
+            } else {
+                manualTheme = theme;
+                addDebugLog('👆 Tema manual: ' + theme);
+                applyWeatherTheme(theme);
+            }
+            updateThemeButtons();
+        }
+        
+        function updateThemeButtons() {
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            if (manualTheme) {
+                const btn = document.getElementById('btn-' + manualTheme);
+                if (btn) btn.classList.add('active');
+            } else {
+                const btn = document.getElementById('btn-auto');
+                if (btn) btn.classList.add('active');
+            }
+        }
         
         function loadSavedData() {
             const savedUser = localStorage.getItem('365luz_user');
@@ -1192,83 +1346,91 @@
         const hashtags = ["#EresLuz", "#DíaBrillante", "#MotivoDeAlegría", "#TuEsencia", "#EnergíaPositiva"];
 
         async function detectWeather() {
+            if (manualTheme) {
+                addDebugLog('⚠️ Tema manual activo: ' + manualTheme);
+                return;
+            }
+            
             const hour = new Date().getHours();
+            const now = new Date();
             
-            console.log('🕐 Hora actual:', hour);
+            addDebugLog('━━━━━━━━━━━━━━━━━');
+            addDebugLog('🕐 ' + now.toLocaleTimeString('es-ES'));
+            addDebugLog('📍 Belén, Heredia, CR');
             
-            // Modo nocturno automático (8pm - 6am)
             if (hour >= 20 || hour < 6) {
-                console.log('🌙 Modo nocturno activado por hora');
+                addDebugLog('🌙 Noche (hora: ' + hour + ')');
                 applyWeatherTheme('night');
                 return;
             }
             
-            // Durante el día, verificar clima con API
             if (WEATHER_API_KEY && WEATHER_API_KEY !== '6f66e2afe270d596638eba65b13ceafe') {
-                console.log('🔑 Intentando obtener clima de la API...');
+                addDebugLog('📡 Consultando API...');
                 try {
                     const latitude = 9.9881;
                     const longitude = -84.1811;
                     
-                    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
-                    console.log('📡 URL de la API:', url);
+                    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`;
                     
                     const response = await fetch(url);
-                    console.log('📥 Respuesta de la API - Status:', response.status);
+                    addDebugLog('📥 Status: ' + response.status);
                     
                     if (!response.ok) {
                         const errorText = await response.text();
-                        console.error('❌ Error de API:', errorText);
-                        throw new Error('API request failed: ' + response.status);
+                        addDebugLog('❌ Error: ' + errorText.substring(0, 50));
+                        throw new Error('API failed');
                     }
                     
                     const data = await response.json();
-                    console.log('🌤️ Datos completos del clima:', data);
+                    addDebugLog('✅ Datos recibidos');
+                    addDebugLog('🌍 ' + data.name);
+                    addDebugLog('🌡️ ' + data.main.temp.toFixed(1) + '°C');
+                    addDebugLog('💧 ' + data.main.humidity + '%');
                     
-                    const weatherCode = data.weather[0].id;
-                    const weatherMain = data.weather[0].main.toLowerCase();
-                    const weatherDescription = data.weather[0].description;
-                    
-                    console.log('🔢 Código del clima:', weatherCode);
-                    console.log('☁️ Tipo:', weatherMain);
-                    console.log('📝 Descripción:', weatherDescription);
-                    console.log('🌡️ Temperatura:', Math.round(data.main.temp - 273.15) + '°C');
-                    
-                    // Detectar lluvia, tormenta o llovizna
-                    // Códigos: 200-299 (tormenta), 300-399 (llovizna), 500-599 (lluvia)
-                    if (weatherCode >= 200 && weatherCode < 600) {
-                        console.log('🌧️ ¡LLUVIA DETECTADA! Aplicando tema de lluvia');
-                        applyWeatherTheme('rainy');
+                    if (data.weather && data.weather.length > 0) {
+                        const weatherCode = data.weather[0].id;
+                        const weatherMain = data.weather[0].main;
+                        const weatherDesc = data.weather[0].description;
+                        
+                        addDebugLog('━━━━━━━━━━━━━━━━━');
+                        addDebugLog('☁️ ' + weatherMain);
+                        addDebugLog('📝 ' + weatherDesc);
+                        addDebugLog('🔢 Código: ' + weatherCode);
+                        
+                        const isRainy = weatherCode >= 200 && weatherCode < 600;
+                        const hasRainText = weatherMain.toLowerCase().includes('rain') || 
+                                          weatherMain.toLowerCase().includes('drizzle') || 
+                                          weatherMain.toLowerCase().includes('thunderstorm');
+                        
+                        addDebugLog('🔍 Código 200-599? ' + (isRainy ? 'SÍ' : 'NO'));
+                        addDebugLog('🔍 Texto lluvia? ' + (hasRainText ? 'SÍ' : 'NO'));
+                        
+                        if (isRainy || hasRainText) {
+                            addDebugLog('🌧️ ✅ LLUVIA!');
+                            applyWeatherTheme('rainy');
+                            return;
+                        }
+                        
+                        addDebugLog('☀️ Soleado');
+                        applyWeatherTheme('sunny');
                         return;
                     }
-                    
-                    // También detectar por nombre
-                    if (weatherMain.includes('rain') || weatherMain.includes('drizzle') || weatherMain.includes('thunderstorm')) {
-                        console.log('🌧️ ¡LLUVIA DETECTADA POR NOMBRE! Aplicando tema de lluvia');
-                        applyWeatherTheme('rainy');
-                        return;
-                    }
-                    
-                    console.log('☀️ Clima despejado, aplicando tema soleado');
-                    applyWeatherTheme('sunny');
-                    return;
                     
                 } catch (error) {
-                    console.error('⚠️ Error al obtener clima:', error);
-                    console.log('☀️ Usando modo soleado por defecto debido al error');
+                    addDebugLog('⚠️ Error: ' + error.message);
                 }
             } else {
-                console.log('ℹ️ No hay API Key válida configurada');
+                addDebugLog('❌ Sin API Key');
             }
             
-            // Por defecto durante el día: soleado
-            console.log('☀️ Aplicando modo soleado (default)');
+            addDebugLog('☀️ Default: Soleado');
             applyWeatherTheme('sunny');
         }
         
         function applyWeatherTheme(weather) {
             currentWeather = weather;
             document.body.className = weather;
+            addDebugLog('🎨 Tema: ' + weather);
             
             const effectsContainer = document.getElementById('weatherEffects');
             effectsContainer.innerHTML = '';
@@ -1287,6 +1449,8 @@
                 createLightning(effectsContainer);
                 createClouds(effectsContainer, 5, true);
             }
+            
+            updateThemeButtons();
         }
         
         function createSun(container) {
@@ -1453,7 +1617,7 @@
                 document.getElementById('nextBtn').disabled = tomorrow > today;
             }
             
-            renderNotes();
+        renderNotes();
         }
         
         function showToday() {
@@ -1479,6 +1643,8 @@
         if (!userData) {
             detectWeather();
         }
+        
+        updateThemeButtons();
     </script>
 </body>
 </html>
