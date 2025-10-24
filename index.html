@@ -752,11 +752,13 @@
         let userData = null;
         let reflections = {};
         let currentWeather = 'sunny';
+        let notes = {}; // Estructura: { 'dateKey': [{ id, title, content, subnotes: [{id, text, completed}] }] }
         
         // Cargar datos guardados al iniciar
         function loadSavedData() {
             const savedUser = localStorage.getItem('365luz_user');
             const savedReflections = localStorage.getItem('365luz_reflections');
+            const savedNotes = localStorage.getItem('365luz_notes');
             
             if (savedUser) {
                 userData = JSON.parse(savedUser);
@@ -773,6 +775,10 @@
             if (savedReflections) {
                 reflections = JSON.parse(savedReflections);
             }
+            
+            if (savedNotes) {
+                notes = JSON.parse(savedNotes);
+            }
         }
         
         // Guardar datos del usuario
@@ -785,18 +791,175 @@
             localStorage.setItem('365luz_reflections', JSON.stringify(reflections));
         }
         
+        // Guardar notas
+        function saveNotes() {
+            localStorage.setItem('365luz_notes', JSON.stringify(notes));
+        }
+        
         // Cerrar sesión (por si quiere cambiar de usuario)
         function logout() {
             if (confirm('¿Seguro que quieres cerrar sesión?')) {
                 localStorage.removeItem('365luz_user');
                 localStorage.removeItem('365luz_reflections');
+                localStorage.removeItem('365luz_notes');
                 userData = null;
                 reflections = {};
+                notes = {};
                 document.getElementById('widgetScreen').classList.add('hidden');
                 document.getElementById('loginScreen').classList.remove('hidden');
                 document.getElementById('userName').value = '';
                 document.getElementById('userBirthday').value = '';
             }
+        }
+        
+        // Sistema de Notas
+        function getCurrentDateKey() {
+            return new Date(currentDate).toDateString();
+        }
+        
+        function addNewNote() {
+            const dateKey = getCurrentDateKey();
+            if (!notes[dateKey]) {
+                notes[dateKey] = [];
+            }
+            
+            const newNote = {
+                id: Date.now(),
+                title: 'Nueva Nota',
+                content: '',
+                subnotes: []
+            };
+            
+            notes[dateKey].push(newNote);
+            saveNotes();
+            renderNotes();
+        }
+        
+        function deleteNote(noteId) {
+            const dateKey = getCurrentDateKey();
+            if (confirm('¿Eliminar esta nota?')) {
+                notes[dateKey] = notes[dateKey].filter(note => note.id !== noteId);
+                saveNotes();
+                renderNotes();
+            }
+        }
+        
+        function updateNoteTitle(noteId, newTitle) {
+            const dateKey = getCurrentDateKey();
+            const note = notes[dateKey].find(n => n.id === noteId);
+            if (note) {
+                note.title = newTitle;
+                saveNotes();
+            }
+        }
+        
+        function updateNoteContent(noteId, newContent) {
+            const dateKey = getCurrentDateKey();
+            const note = notes[dateKey].find(n => n.id === noteId);
+            if (note) {
+                note.content = newContent;
+                saveNotes();
+            }
+        }
+        
+        function addSubnote(noteId) {
+            const dateKey = getCurrentDateKey();
+            const note = notes[dateKey].find(n => n.id === noteId);
+            if (note) {
+                note.subnotes.push({
+                    id: Date.now(),
+                    text: '',
+                    completed: false
+                });
+                saveNotes();
+                renderNotes();
+            }
+        }
+        
+        function deleteSubnote(noteId, subnoteId) {
+            const dateKey = getCurrentDateKey();
+            const note = notes[dateKey].find(n => n.id === noteId);
+            if (note) {
+                note.subnotes = note.subnotes.filter(sn => sn.id !== subnoteId);
+                saveNotes();
+                renderNotes();
+            }
+        }
+        
+        function toggleSubnote(noteId, subnoteId) {
+            const dateKey = getCurrentDateKey();
+            const note = notes[dateKey].find(n => n.id === noteId);
+            if (note) {
+                const subnote = note.subnotes.find(sn => sn.id === subnoteId);
+                if (subnote) {
+                    subnote.completed = !subnote.completed;
+                    saveNotes();
+                    renderNotes();
+                }
+            }
+        }
+        
+        function updateSubnoteText(noteId, subnoteId, newText) {
+            const dateKey = getCurrentDateKey();
+            const note = notes[dateKey].find(n => n.id === noteId);
+            if (note) {
+                const subnote = note.subnotes.find(sn => sn.id === subnoteId);
+                if (subnote) {
+                    subnote.text = newText;
+                    saveNotes();
+                }
+            }
+        }
+        
+        function renderNotes() {
+            const dateKey = getCurrentDateKey();
+            const notesList = document.getElementById('notesList');
+            const dayNotes = notes[dateKey] || [];
+            
+            if (dayNotes.length === 0) {
+                notesList.innerHTML = '<div class="empty-notes">No hay notas para este día. ¡Crea una nueva! 📝</div>';
+                return;
+            }
+            
+            notesList.innerHTML = dayNotes.map(note => `
+                <div class="note-item">
+                    <div class="note-header">
+                        <input 
+                            type="text" 
+                            class="note-title-input" 
+                            value="${note.title}" 
+                            onchange="updateNoteTitle(${note.id}, this.value)"
+                            placeholder="Título de la nota">
+                        <div class="note-actions">
+                            <button class="note-btn note-delete-btn" onclick="deleteNote(${note.id})">🗑️</button>
+                        </div>
+                    </div>
+                    <textarea 
+                        class="note-content" 
+                        onchange="updateNoteContent(${note.id}, this.value)" 
+                        placeholder="Escribe aquí tu nota...">${note.content}</textarea>
+                    
+                    <div class="subnotes-container">
+                        ${note.subnotes.map(subnote => `
+                            <div class="subnote-item">
+                                <input 
+                                    type="checkbox" 
+                                    class="subnote-checkbox" 
+                                    ${subnote.completed ? 'checked' : ''}
+                                    onchange="toggleSubnote(${note.id}, ${subnote.id})">
+                                <input 
+                                    type="text" 
+                                    class="subnote-text ${subnote.completed ? 'completed' : ''}" 
+                                    value="${subnote.text}" 
+                                    onchange="updateSubnoteText(${note.id}, ${subnote.id}, this.value)"
+                                    placeholder="Sub-tarea...">
+                                <button class="subnote-delete" onclick="deleteSubnote(${note.id}, ${subnote.id})">×</button>
+                            </div>
+                        `).join('')}
+                        <button class="add-subnote-btn" onclick="addSubnote(${note.id})">+ Sub-nota</button>
+                    </div>
+                </div>
+            `).join('');
         }
         
         const phrases = "Tu sonrisa tiene poder, úsala hoy.|😊|No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖|Eres suficiente, incluso en tus días más simples.|✨|Hoy es un buen día para empezar de nuevo.|🌅|Cada paso pequeño cuenta, no lo olvides.|👣|La calma también es progreso.|🌊|Tienes un brillo que nadie puede copiar.|⭐|Lo que haces con amor siempre deja huella.|💝|Respira, vas bien.|🌬️|No corras, las flores no florecen de prisa.|🌸|Mereces todo lo bonito que estás buscando.|🌺|Lo que das, vuelve.|🔄|Eres más fuerte de lo que piensas.|💪|Tu energía cambia los lugares donde vas.|✨|Hoy elige verte con cariño.|💕|Lo estás intentando, y eso ya vale mucho.|🌟|No necesitas validación para ser valiosa.|👑|A veces descansar también es avanzar.|🛏️|Cada día puedes reinventarte un poco.|🦋|Eres luz, aunque no todos lo noten.|💡|Tu historia es única.|📖|Los días buenos llegan.|⏳|Agradece lo que tienes.|🙏|Elige la paz.|☮️|Tu voz importa.|🗣️|Has superado tanto.|🏔️|Lo mejor está por venir.|🎁|Sé tú misma.|🌈|El alma necesita descanso.|🌬️|Las cosas buenas toman tiempo.|⏰|Tu presencia es un regalo.|🎀|Sé amable contigo.|💗|No te castigues por sentir.|💙|Hoy puede enseñarte.|📚|Sigue adelante.|🐢|Los errores te fortalecen.|💎|No apagues tu luz.|💫|Tienes tanto por dar.|🎁|No necesitas claridad total.|🧭|Disfruta sin culpa.|🌻|Tu corazón sabe.|❤️|Sonríe hoy.|😊|Puedes cambiar.|🔄|Has llegado lejos.|🗺️|Tu bondad es fuerza.|🌟|No todo debe tener sentido.|🌙|Hoy cuenta.|🍃|Haz espacio para el bien.|🏡|Lo simple es hermoso.|🌿|Confía en el proceso.|🔮|Descansa.|😴|Elige ver lo bueno.|👀|El sol tarda en salir.|🌅|Eres capaz.|💪|No hay prisa.|🌷|Cada día es nuevo.|🌄|Lo estás haciendo bien.|🌟|Ya vales.|👑|Respira profundo.|🌬️|La ternura es fortaleza.|🌸|Has crecido.|🌱|Agradece.|🙏|Descansa si te cansas.|😌|Eres parte de algo bonito.|🌺|Estás avanzando.|🚶|Tu cuidado cuenta.|💞|Empezar de cero es valiente.|🔥|Mereces calma.|🕊️|Corazón valiente.|💖|Date crédito.|🏆|No necesitas producir.|✨|Eres suficiente en silencio.|🤫|La esperanza llega.|🌤️|Elige tu ritmo.|🎵|La bondad vuelve.|🔄|Algunas cosas se sienten.|💫|El mundo te sostiene.|🌍|Las victorias pequeñas importan.|🎉|Puedes soñar.|🌠|Cree en ti.|⭐|Eres capaz.|💪|No te exijas tanto.|🌼|Agradece tus pasos.|👣|Estás aprendiendo.|📚|Disfruta lento.|🐌|No necesitas todas las respuestas.|❓|Ya eres hermosa.|🌹|Suelta el control.|🎈|Mereces lo bueno.|💝|Celebra tus avances.|🎊|El tiempo enseña.|⏳|Sonríe más.|😊|Eres un proceso.|🔧|Tu ternura cambia.|🌎|Nadie más es tú.|✨|Mereces amor.|❤️|Eres diferente y brillante.|💎|No todo se mide.|📊|Siente orgullo.|🦁|Estás creciendo.|🌳|La calma llega.|🌊|No apagues tu entusiasmo.|🔥|Tus pasos son valientes.|👣|Puedes empezar otra vez.|🌅|Eres parte de algo grande.|🌌|Necesitar tiempo está bien.|⏰|Cada día te acerca.|🦋|Tus sueños merecen espacio.|💭|Eres luz.|💡|No controles todo.|🎮|Descansa sin culpa.|🛌|Tu esfuerzo vale.|🏅|Sé paciente contigo.|⏳|El amor florece.|🌻|Eres valiente.|🦸|El rumbo importa.|🧭|Eres constante.|⛰️|Descansar es sabio.|😌|No necesitas validación.|💫|Tu paz vale más.|☮️|Aprendes a quererte.|💗|La magia está en lo pequeño.|✨|Agradece lo simple.|🍂|Eres resiliente.|💪|Mira al cielo.|☁️|Lo haces bien.|👍|La felicidad se cultiva.|🌱|Confía en la vida.|🌈|Eres luz siempre.|🌥️|Tu ternura es regalo.|🎁|Cada día cuenta.|📆|No siempre debes ser fuerte.|🛡️|El descanso es parte.|🚶|Eres importante.|⭐|Suelta el peso.|🎈|El amor vuelve.|💕|Aprendes a vivir.|🌟|Tu forma de amar importa.|💖|Cree en lo bueno.|🌠|Eres valiente.|🦁|Vas bien.|🚶|La esperanza encuentra camino.|🌅|No necesitas plan perfecto.|📝|Estás donde debes.|📍|La vida es intentarlo.|🎯|No juzgues tus pausas.|⏸️|Tu corazón late.|💓|Elige calma.|🕊️|Hoy te fortalece.|💪|El cambio llega.|🌱|Comparte amor contigo.|💝|Estás floreciendo.|🌺|Confía en tu camino.|🛤️|Tu existencia es suficiente.|✨|Sé auténtica.|🌟|Eres historia hermosa.|📖|Simplemente sigue.|➡️|Abrázate con paciencia.|🤗|Lo haces bien.|👀|Cada día renace.|🌄|Eres capaz siempre.|💪|Sonríe.|😊|Cuida tu energía.|⚡|La bondad deja huella.|👣|Eres inspiración.|💫|Hoy siembras mañana.|🌷|Aprende a brillar.|✨|No subestimes tu crecimiento.|📈|Respira y sigue.|🌬️|Eres fuerte.|💪|El universo te recuerda.|🌌|Lo logras poco a poco.|🎯|Elige paz.|🔇|Eres increíble.|🌟|Todo tiene momento.|⏰|No te castigues.|🩹|Eres arte.|🎨|Déjate sorprender.|🎁|Eres luminosa.|✨|No pierdas la fe.|💭|Tu luz guía.|🔦|Haz algo bueno.|💚|Eres valiosa.|💎|Hoy te transforma.|🦋|Mereces suavidad.|☁️|Deja respirar tu alma.|🌬️|Eres suficiente.|✨|Ya tienes lo esencial.|💝|Date tiempo.|⏳|Te quieres con calma.|💗|La ternura es fuerza.|🌸|Tu ritmo es perfecto.|🎵|Eres luz siempre.|💡|Agradece lo que tienes.|🙏|Tu esencia es hermosa.|🌹|Lo haces lo mejor.|👏|Respira y confía.|🌬️|Eres milagro.|✨|Los sueños son reales.|🌠|Creces en silencio.|🌱|Elige ver bonito.|👁️|Tu paz es prioridad.|☮️|Disfruta el presente.|🎁|Alma fuerte y sensible.|💖|Da un paso más.|👣|Tu camino tiene sentido.|🛤️|Eres inspiración.|💫|Confía en tus decisiones.|✔️|Aprende a soltar.|🎈|Eres suficiente.|⭐|Celebra tu historia.|🎉|Descubre más.|🔍|Crea belleza.|🎨|Abraza emociones.|🤗|Estás sanando.|🩹|Tu esfuerzo se ve.|👀|Cree más en ti.|💪|Eres amor.|❤️|Lo bueno no duele.|🌈|Deja fluir.|🌊|Puedes lograrlo.|🏆|Eres única.|💎|Respira sin prisa.|🌬️|Eres bonita.|🌺|Todo mejora.|📈|Tu luz no depende del clima.|☀️|Aprendes a cuidarte.|💚|Date un momento.|🧘|Eres suficiente en pausa.|⏸️|No todo es perfecto.|🌸|Agradece avances.|📊|Eres fuerza en calma.|🌊|Elige amor.|💕|Creces con intentos.|🌱|Tu ternura cambia días.|🌼|Sonríe sin razón.|😊|Eres resiliente.|💪|Recuerda lo lejos.|🗺️|Déjate abrazar.|🤗|Vale la pena.|✨|Confía en el proceso.|🔄|Estás brillando.|💫|Eres amor en movimiento.|❤️|Date crédito.|🏅|Eres más que suficiente.|👑|Encuentra belleza simple.|🍃|Lo haces genial.|🌟|Eres esperanza.|🌅|Suelta culpa.|🎈|Eres paz.|☮️|Abrázate con cariño.|🤗|Eres parte grande.|🌌|Confía sin dudar.|💪|Tu alma merece descanso.|😴|Ve el lado bueno.|😊|Eres el sol.|☀️|No te exijas.|🌸|Eres hermosa siempre.|🌹|Siente sin miedo.|💙|Eres más capaz.|💪|Respira y suelta.|🌬️|Tu historia se construye.|🏗️|Agradece existir.|🙏|Eres amor.|❤️|Vales mucho.|💎|Aprendes a florecer.|🌺|Confía en fuerza.|💪|Corazón valiente.|🦁|Descansa sin culpa.|😌|Logras cosas grandes.|🏆|Busca calma dentro.|🧘|Eres luz llena.|✨|Sonríe a la vida.|😊|Haces lo correcto.|✔️|Cree en finales felices.|🌈|Eres luz para todos.|💡|Elige ternura.|💗|Eres suficiente siempre.|⭐|Aprecia lo que tienes.|🙏|Eres fuerza y dulzura.|🌸|Deja que esperanza guíe.|🌟|Eres buen recuerdo.|📸|Sé paciente.|⏳|Eres valiente aquí.|💪|Confía intuición.|🔮|Mereces amor verdadero.|💖|Agradece camino.|🛤️|Eres inspiración silenciosa.|🌙|Da paso con fe.|👣|Eres parte hermosa.|🌺|Puedes empezar otra vez.|🌅|Eres magia.|✨|Suelta lo viejo.|🎈|Eres alegría.|😊|Celebra existencia.|🎉|Eres constancia.|🌊|Todo pasa.|⏰|Eres más que errores.|⭐|Vive con gratitud.|🙏|Eres luz creyendo.|💡|Descansa.|🛌|Eres importante para alguien.|💝|Suelta miedo.|🎈|Eres historia evolutiva.|📖|Confía milagros.|✨|Eres suficiente sin condiciones.|💖|Cree posibilidades.|🌟|Eres parte buena.|🌈|Abraza lo que eres.|🤗|Eres fuerte que dudas.|💪|Elige amor todo.|❤️|Eres chispa esperanza.|✨|Disfruta lo haces.|😊|Eres capaz soñar.|🌠|Sé amable contigo.|💗|Eres luz tormenta.|⛈️|Agradece aprendido.|📚|Eres alma hermosa.|💫|Confía futuro.|🔮|Eres faro demás.|🗼|Respira sigue.|🌬️|Eres amor calma fuerza.|💪|No olvides sonreír.|😊|Eres resiliencia.|📖|Todo se acomoda.|🧩|Eres hermosa eres.|🌹|Ve bueno en ti.|👁️|Eres prueba luz vuelve.|🌅|Suelta pesa.|🎈|Eres sentido.|🌟|Celebra victorias.|🎊|Eres expansión.|🌌|Elige cuidarte.|💚|Eres todo necesitas.|✨|Mereces cosas buenas.|🎁|Eres fuerte miedos.|💪|Agradece presente.|🎁|Eres corazón amor.|❤️|Descansa sin remordimientos.|😴|Eres única especial.|💎|Sigue creyendo.|⭐|Eres calma buscas.|🌊|Confía tiempo.|⏰|Puedes volver empezar.|🌅|Deja vida fluir.|🌊|Eres digna amor.|💖|Agradece fuiste eres.|🙏|Eres promesa cumplida.|✅|Confía poder simple.|🍃|Eres abrazo mundo.|🤗|Deja espacio esperanza.|🌟|Eres recordatorio bondad.|💝|Vive ligereza.|🎈|Eres todo necesitas.|✨|Elige paz.|☮️|Eres valiente crees.|🦁|Confía proceso.|🔄|Eres amor humano.|💗|Sonríe lejos llegaste.|😊|Eres historia orgullo.|📖|Agradece por ti.|🙏|Eres prueba puede.|🏆|Todo saldrá bien.|🌈|Eres suficiente siempre serás.|⭐";
@@ -1074,6 +1237,9 @@
                 document.getElementById('nextBtn').disabled = tomorrow > today;
             }
             
+            // Renderizar notas del día actual
+            renderNotes();
+
             // Mostrar/ocultar navegación según cumpleaños
             const navigationDiv = document.querySelector('.navigation');
             if (userData && isBirthday(selected, userData.birthday)) {
