@@ -1194,38 +1194,75 @@
         async function detectWeather() {
             const hour = new Date().getHours();
             
+            console.log('🕐 Hora actual:', hour);
+            
+            // Modo nocturno automático (8pm - 6am)
             if (hour >= 20 || hour < 6) {
+                console.log('🌙 Modo nocturno activado por hora');
                 applyWeatherTheme('night');
                 return;
             }
             
+            // Durante el día, verificar clima con API
             if (WEATHER_API_KEY && WEATHER_API_KEY !== '6f66e2afe270d596638eba65b13ceafe') {
+                console.log('🔑 Intentando obtener clima de la API...');
                 try {
                     const latitude = 9.9881;
                     const longitude = -84.1811;
                     
-                    const response = await fetch(
-                        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
-                    );
+                    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
+                    console.log('📡 URL de la API:', url);
                     
-                    if (!response.ok) throw new Error('API request failed');
+                    const response = await fetch(url);
+                    console.log('📥 Respuesta de la API - Status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('❌ Error de API:', errorText);
+                        throw new Error('API request failed: ' + response.status);
+                    }
                     
                     const data = await response.json();
-                    const weatherCode = data.weather[0].id;
+                    console.log('🌤️ Datos completos del clima:', data);
                     
+                    const weatherCode = data.weather[0].id;
+                    const weatherMain = data.weather[0].main.toLowerCase();
+                    const weatherDescription = data.weather[0].description;
+                    
+                    console.log('🔢 Código del clima:', weatherCode);
+                    console.log('☁️ Tipo:', weatherMain);
+                    console.log('📝 Descripción:', weatherDescription);
+                    console.log('🌡️ Temperatura:', Math.round(data.main.temp - 273.15) + '°C');
+                    
+                    // Detectar lluvia, tormenta o llovizna
+                    // Códigos: 200-299 (tormenta), 300-399 (llovizna), 500-599 (lluvia)
                     if (weatherCode >= 200 && weatherCode < 600) {
+                        console.log('🌧️ ¡LLUVIA DETECTADA! Aplicando tema de lluvia');
                         applyWeatherTheme('rainy');
                         return;
                     }
                     
+                    // También detectar por nombre
+                    if (weatherMain.includes('rain') || weatherMain.includes('drizzle') || weatherMain.includes('thunderstorm')) {
+                        console.log('🌧️ ¡LLUVIA DETECTADA POR NOMBRE! Aplicando tema de lluvia');
+                        applyWeatherTheme('rainy');
+                        return;
+                    }
+                    
+                    console.log('☀️ Clima despejado, aplicando tema soleado');
                     applyWeatherTheme('sunny');
                     return;
                     
                 } catch (error) {
-                    console.log('Error al obtener clima:', error.message);
+                    console.error('⚠️ Error al obtener clima:', error);
+                    console.log('☀️ Usando modo soleado por defecto debido al error');
                 }
+            } else {
+                console.log('ℹ️ No hay API Key válida configurada');
             }
             
+            // Por defecto durante el día: soleado
+            console.log('☀️ Aplicando modo soleado (default)');
             applyWeatherTheme('sunny');
         }
         
