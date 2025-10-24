@@ -191,15 +191,17 @@
         
         /* Container del widget */
         .widget-container {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 30px;
             padding: 25px 20px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.15);
-            border: 3px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 
+                        0 10px 30px rgba(0, 0, 0, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.8);
             position: relative;
             z-index: 10;
             transition: all 0.5s ease;
@@ -221,13 +223,13 @@
         }
         
         body.night .widget-container {
-            background: rgba(26, 35, 126, 0.75);
-            border: 3px solid rgba(139, 157, 195, 0.5);
+            background: rgba(30, 41, 59, 0.92);
+            border: 2px solid rgba(71, 85, 105, 0.5);
         }
         
         body.rainy .widget-container {
-            background: rgba(100, 116, 139, 0.75);
-            border: 3px solid rgba(148, 163, 184, 0.5);
+            background: rgba(51, 65, 85, 0.92);
+            border: 2px solid rgba(100, 116, 139, 0.5);
         }
         
         .hidden { display: none; }
@@ -366,40 +368,35 @@
         
         .day-number {
             font-size: 2.8em;
-            color: #1a1a1a;
+            color: #2d3748;
             font-weight: 800;
-            text-shadow: 3px 3px 0px rgba(255, 255, 255, 0.8), 
-                         5px 5px 15px rgba(0, 0, 0, 0.2);
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
             margin-bottom: 5px;
-            letter-spacing: -2px;
+            letter-spacing: -1px;
         }
         
         @media (max-width: 480px) {
             .day-number {
                 font-size: 2.2em;
-                text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8), 
-                             3px 3px 10px rgba(0, 0, 0, 0.2);
             }
         }
         
         body.night .day-number {
-            color: #FFD93D;
-            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3),
-                         0 0 20px rgba(255, 217, 61, 0.6);
+            color: #fbbf24;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
         }
         
         body.rainy .day-number {
-            color: #E8F5FF;
-            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3),
-                         0 0 15px rgba(100, 149, 237, 0.5);
+            color: #93c5fd;
+            text-shadow: 0 0 15px rgba(147, 197, 253, 0.3);
         }
         
         .date-display {
-            color: #2d2d2d;
+            color: #4a5568;
             font-size: 0.9em;
-            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.7);
+            text-shadow: none;
             text-transform: capitalize;
-            font-weight: 600;
+            font-weight: 500;
             line-height: 1.4;
         }
         
@@ -410,13 +407,11 @@
         }
         
         body.night .date-display {
-            color: #FFA07A;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+            color: #cbd5e1;
         }
         
         body.rainy .date-display {
-            color: #B8E1FF;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+            color: #cbd5e1;
         }
         
         .weather-icon {
@@ -433,17 +428,16 @@
         }
         
         .message-box {
-            background: rgba(255, 255, 255, 0.75);
+            background: linear-gradient(135deg, rgba(254, 202, 202, 0.4) 0%, rgba(252, 231, 243, 0.4) 100%);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 3px solid rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(251, 207, 232, 0.5);
             padding: 25px 20px;
             border-radius: 25px;
             margin: 15px 0;
             text-align: center;
             transition: all 0.5s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 
-                        0 3px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.15);
         }
         
         @media (max-width: 480px) {
@@ -454,20 +448,22 @@
         }
         
         body.night .message-box {
-            background: rgba(44, 62, 80, 0.7);
-            border: 3px solid rgba(52, 73, 94, 0.8);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
+            border: 2px solid rgba(129, 140, 248, 0.4);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
         }
         
         body.rainy .message-box {
-            background: rgba(71, 85, 105, 0.7);
-            border: 3px solid rgba(100, 116, 139, 0.8);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(99, 102, 241, 0.3) 100%);
+            border: 2px solid rgba(96, 165, 250, 0.4);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
         }
         
         .message-text {
-            color: #1a1a1a;
+            color: #1f2937;
             font-size: 1.1em;
             line-height: 1.7;
-            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
             font-weight: 600;
         }
         
@@ -485,22 +481,22 @@
         }
         
         body.night .message-text {
-            color: #FFEAA7;
-            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+            color: #e0e7ff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         body.rainy .message-text {
-            color: #DFF9FB;
-            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+            color: #dbeafe;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         .hashtag {
             display: block;
             margin-top: 12px;
-            color: #FF6B6B;
+            color: #ec4899;
             font-size: 0.85em;
             font-weight: 700;
-            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
+            text-shadow: none;
         }
         
         @media (max-width: 480px) {
@@ -511,13 +507,11 @@
         }
         
         body.night .hashtag {
-            color: #74B9FF;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+            color: #a78bfa;
         }
         
         body.rainy .hashtag {
-            color: #A29BFE;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+            color: #60a5fa;
         }
         
         .navigation {
@@ -536,21 +530,24 @@
         }
         
         .nav-btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(167, 139, 250, 0.6);
             padding: 12px 18px;
             border-radius: 15px;
-            font-size: 0.85em;
+            font-size: 0.9em;
             flex-shrink: 0;
             min-height: 44px;
             -webkit-tap-highlight-color: transparent;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
         }
         
         @media (max-width: 480px) {
             .nav-btn {
                 padding: 10px 14px;
-                font-size: 0.8em;
+                font-size: 0.85em;
                 flex: 1 1 auto;
                 min-width: 80px;
             }
@@ -559,7 +556,7 @@
         @media (max-width: 360px) {
             .nav-btn {
                 padding: 10px 12px;
-                font-size: 0.75em;
+                font-size: 0.8em;
             }
         }
         
@@ -568,7 +565,14 @@
         }
         
         .nav-btn:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(167, 139, 250, 0.6) 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.4;
+            background: linear-gradient(135deg, rgba(148, 163, 184, 0.5) 0%, rgba(100, 116, 139, 0.5) 100%);
+            border-color: rgba(148, 163, 184, 0.6);
         }
         
         .birthday-special {
