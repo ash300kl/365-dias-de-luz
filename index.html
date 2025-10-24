@@ -757,10 +757,150 @@
         }
         
         .add-subnote-btn:hover { background: rgba(167, 139, 250, 0.3); }
+        
+        /* Modal de Notas */
+        .notes-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .notes-modal.show {
+            display: flex;
+        }
+        
+        .notes-modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        body.night .notes-modal-content {
+            background: rgba(30, 41, 59, 0.98);
+            border: 3px solid rgba(52, 73, 94, 0.9);
+        }
+        
+        body.rainy .notes-modal-content {
+            background: rgba(51, 65, 85, 0.98);
+            border: 3px solid rgba(100, 116, 139, 0.9);
+        }
+        
+        .notes-modal-content::-webkit-scrollbar { width: 8px; }
+        .notes-modal-content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+        .notes-modal-content::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.5); border-radius: 10px; }
+        
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #ef4444;
+            font-weight: bold;
+        }
+        
+        .modal-close-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+            transform: rotate(90deg) scale(1.1);
+        }
+        
+        .open-notes-btn {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            color: white;
+            border: 2px solid rgba(167, 139, 250, 0.6);
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            margin: 15px auto 0;
+            max-width: 200px;
+        }
+        
+        .open-notes-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+        
+        @media (max-width: 480px) {
+            .notes-modal-content {
+                padding: 20px;
+                max-height: 90vh;
+            }
+            
+            .modal-close-btn {
+                top: 15px;
+                right: 15px;
+                width: 35px;
+                height: 35px;
+                font-size: 1.3em;
+            }
+        }
     </style>
 </head>
 <body class="sunny">
     <div class="weather-effects" id="weatherEffects"></div>
+    
+    <!-- Modal de Notas -->
+    <div class="notes-modal" id="notesModal" onclick="closeNotesModal(event)">
+        <div class="notes-modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeNotesModal()">×</button>
+            
+            <div class="notes-container" style="background: transparent; border: none; padding: 0; margin: 0; box-shadow: none;">
+                <div class="notes-header">
+                    <h3>📝 Mis Notas</h3>
+                    <button class="add-note-btn" onclick="addNewNote()">+ Nueva</button>
+                </div>
+                <div class="notes-list" id="notesList">
+                    <div class="empty-notes">No hay notas para este día. ¡Crea una nueva! 📝</div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <div class="widget-container">
         <div id="loginScreen">
@@ -800,15 +940,9 @@
                 <textarea id="reflectionText" placeholder="Escribe aquí..."></textarea>
             </div>
             
-            <div class="notes-container">
-                <div class="notes-header">
-                    <h3>📝 Mis Notas</h3>
-                    <button class="add-note-btn" onclick="addNewNote()">+ Nueva</button>
-                </div>
-                <div class="notes-list" id="notesList">
-                    <div class="empty-notes">No hay notas para este día. ¡Crea una nueva! 📝</div>
-                </div>
-            </div>
+            <button class="open-notes-btn" onclick="openNotesModal()">
+                📝 Abrir Mis Notas
+            </button>
             
             <div class="navigation">
                 <button class="nav-btn" onclick="previousDay()">← Anterior</button>
@@ -902,6 +1036,12 @@
             saveNotes();
             renderNotes();
         }
+        
+        document.getElementById('reflectionText').addEventListener('input', function() {
+            const dateKey = new Date(currentDate).toDateString();
+            reflections[dateKey] = this.value;
+            saveReflections();
+        });
         
         function deleteNote(noteId) {
             const dateKey = getCurrentDateKey();
@@ -1028,6 +1168,16 @@
                     </div>
                 </div>
             `).join('');
+        }
+        
+        function openNotesModal() {
+            document.getElementById('notesModal').classList.add('show');
+            renderNotes();
+        }
+        
+        function closeNotesModal(event) {
+            if (event && event.target.className !== 'notes-modal') return;
+            document.getElementById('notesModal').classList.remove('show');
         }
         
         const phrases = "Tu sonrisa tiene poder, úsala hoy.|😊|No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖|Eres suficiente, incluso en tus días más simples.|✨|Hoy es un buen día para empezar de nuevo.|🌅|Cada paso pequeño cuenta, no lo olvides.|👣|La calma también es progreso.|🌊|Tienes un brillo que nadie puede copiar.|⭐|Lo que haces con amor siempre deja huella.|💝|Respira, vas bien.|🌬️|No corras, las flores no florecen de prisa.|🌸";
@@ -1268,8 +1418,6 @@
             
             renderNotes();
         }
-        
-        document.getElementById('reflectionText').addEventListener('input', function() {
             const dateKey = new Date(currentDate).toDateString();
             reflections[dateKey] = this.value;
             saveReflections();
