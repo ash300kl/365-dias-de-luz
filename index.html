@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#87CEEB" id="themeColor">
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="365 Días de Luz">
     <title>365 Días de Luz</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,44 +15,32 @@
             justify-content: center;
             align-items: center;
             padding: 15px;
-            margin: 0;
             transition: all 1s ease;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         
-        /* Prevenir zoom en inputs en iOS */
-        input[type="text"],
-        input[type="date"],
-        textarea {
+        input[type="text"], input[type="date"], textarea {
             font-size: 16px !important;
         }
         
-        /* Deshabilitar selección de texto en elementos interactivos */
         button, .nav-btn {
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
         
-        /* TEMA DÍA SOLEADO */
         body.sunny {
             background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #FFF8DC 100%);
         }
         
-        /* TEMA NOCHE */
         body.night {
             background: linear-gradient(180deg, #0B1026 0%, #1a237e 50%, #283593 100%);
         }
         
-        /* TEMA LLUVIA */
         body.rainy {
             background: linear-gradient(180deg, #4A5568 0%, #667eea 50%, #764ba2 100%);
         }
         
-        /* Efectos de clima */
         .weather-effects {
             position: fixed;
             top: 0;
@@ -68,7 +52,6 @@
             overflow: hidden;
         }
         
-        /* Nubes */
         .cloud {
             position: absolute;
             background: rgba(255, 255, 255, 0.8);
@@ -77,8 +60,7 @@
             animation: float-cloud 60s linear infinite;
         }
         
-        .cloud::before,
-        .cloud::after {
+        .cloud::before, .cloud::after {
             content: '';
             position: absolute;
             background: rgba(255, 255, 255, 0.8);
@@ -104,7 +86,6 @@
             to { transform: translateX(calc(100vw + 200px)); }
         }
         
-        /* Estrellas */
         .star {
             position: absolute;
             background: white;
@@ -117,7 +98,6 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
         
-        /* Sol */
         .sun {
             position: absolute;
             top: 60px;
@@ -131,11 +111,10 @@
         }
         
         @keyframes pulse-sun {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 60px #FFD700, 0 0 100px #FFA500; }
-            50% { transform: scale(1.1); box-shadow: 0 0 80px #FFD700, 0 0 120px #FFA500; }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
         
-        /* Luna */
         .moon {
             position: absolute;
             top: 60px;
@@ -145,7 +124,6 @@
             background: #F0E68C;
             border-radius: 50%;
             box-shadow: 0 0 40px rgba(240, 230, 140, 0.8);
-            position: relative;
         }
         
         .moon::before {
@@ -159,7 +137,6 @@
             border-radius: 50%;
         }
         
-        /* Gotas de lluvia */
         .raindrop {
             position: absolute;
             width: 2px;
@@ -172,7 +149,6 @@
             to { transform: translateY(100vh); }
         }
         
-        /* Relámpago */
         .lightning {
             position: absolute;
             top: 0;
@@ -189,36 +165,24 @@
             91% { opacity: 1; }
         }
         
-        /* Container del widget */
         .widget-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-radius: 30px;
             padding: 25px 20px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 
-                        0 10px 30px rgba(0, 0, 0, 0.1),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.8);
             position: relative;
             z-index: 10;
             transition: all 0.5s ease;
         }
         
-        /* Responsive para pantallas pequeñas */
         @media (max-width: 480px) {
             .widget-container {
                 padding: 20px 15px;
-                border-radius: 25px;
                 max-width: 95%;
-            }
-        }
-        
-        @media (max-height: 700px) {
-            .widget-container {
-                padding: 18px 15px;
             }
         }
         
@@ -234,7 +198,6 @@
         
         .hidden { display: none; }
         
-        /* Login screen */
         .login-emoji {
             font-size: 4em;
             margin-bottom: 20px;
@@ -251,48 +214,20 @@
             font-size: 1.8em;
             margin-bottom: 10px;
             font-weight: 600;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
         }
         
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5em;
-            }
-        }
-        
-        body.night h1 {
-            color: white;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        body.rainy h1 {
-            color: #f5f5f5;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        }
+        body.night h1 { color: white; }
+        body.rainy h1 { color: #f5f5f5; }
         
         .subtitle {
             color: #3d3d3d;
             font-style: italic;
             margin-bottom: 20px;
             font-size: 0.85em;
-            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
         }
         
-        @media (max-width: 480px) {
-            .subtitle {
-                font-size: 0.8em;
-            }
-        }
-        
-        body.night .subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-        }
-        
-        body.rainy .subtitle {
-            color: rgba(255, 255, 255, 0.85);
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-        }
+        body.night .subtitle { color: rgba(255, 255, 255, 0.9); }
+        body.rainy .subtitle { color: rgba(255, 255, 255, 0.85); }
         
         .input-group {
             text-align: left;
@@ -305,21 +240,12 @@
             font-weight: 500;
             margin-bottom: 8px;
             font-size: 0.9em;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
         }
         
-        body.night .input-group label {
-            color: white;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
+        body.night .input-group label { color: white; }
+        body.rainy .input-group label { color: #f0f0f0; }
         
-        body.rainy .input-group label {
-            color: #f0f0f0;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        
-        input[type="text"],
-        input[type="date"] {
+        input[type="text"], input[type="date"] {
             width: 100%;
             padding: 12px 16px;
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -352,7 +278,6 @@
         button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            background: white;
         }
         
         button:disabled {
@@ -360,7 +285,6 @@
             cursor: not-allowed;
         }
         
-        /* Widget content */
         .widget-header {
             text-align: center;
             margin-bottom: 20px;
@@ -372,13 +296,6 @@
             font-weight: 800;
             text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
             margin-bottom: 5px;
-            letter-spacing: -1px;
-        }
-        
-        @media (max-width: 480px) {
-            .day-number {
-                font-size: 2.2em;
-            }
         }
         
         body.night .day-number {
@@ -388,31 +305,17 @@
         
         body.rainy .day-number {
             color: #93c5fd;
-            text-shadow: 0 0 15px rgba(147, 197, 253, 0.3);
         }
         
         .date-display {
             color: #4a5568;
             font-size: 0.9em;
-            text-shadow: none;
             text-transform: capitalize;
             font-weight: 500;
-            line-height: 1.4;
         }
         
-        @media (max-width: 480px) {
-            .date-display {
-                font-size: 0.8em;
-            }
-        }
-        
-        body.night .date-display {
-            color: #cbd5e1;
-        }
-        
-        body.rainy .date-display {
-            color: #cbd5e1;
-        }
+        body.night .date-display { color: #cbd5e1; }
+        body.rainy .date-display { color: #cbd5e1; }
         
         .weather-icon {
             font-size: 2.5em;
@@ -420,75 +323,36 @@
             animation: float 3s ease-in-out infinite;
         }
         
-        @media (max-width: 480px) {
-            .weather-icon {
-                font-size: 2em;
-                margin: 12px 0;
-            }
-        }
-        
         .message-box {
             background: linear-gradient(135deg, rgba(254, 202, 202, 0.4) 0%, rgba(252, 231, 243, 0.4) 100%);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 2px solid rgba(251, 207, 232, 0.5);
             padding: 25px 20px;
             border-radius: 25px;
             margin: 15px 0;
             text-align: center;
-            transition: all 0.5s ease;
             box-shadow: 0 8px 25px rgba(236, 72, 153, 0.15);
-        }
-        
-        @media (max-width: 480px) {
-            .message-box {
-                padding: 20px 15px;
-                margin: 12px 0;
-            }
         }
         
         body.night .message-box {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
             border: 2px solid rgba(129, 140, 248, 0.4);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
         }
         
         body.rainy .message-box {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(99, 102, 241, 0.3) 100%);
             border: 2px solid rgba(96, 165, 250, 0.4);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
         }
         
         .message-text {
             color: #1f2937;
             font-size: 1.1em;
             line-height: 1.7;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
             font-weight: 600;
         }
         
-        @media (max-width: 480px) {
-            .message-text {
-                font-size: 1em;
-                line-height: 1.6;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .message-text {
-                font-size: 0.95em;
-            }
-        }
-        
-        body.night .message-text {
-            color: #e0e7ff;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        
-        body.rainy .message-text {
-            color: #dbeafe;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
+        body.night .message-text { color: #e0e7ff; }
+        body.rainy .message-text { color: #dbeafe; }
         
         .hashtag {
             display: block;
@@ -496,23 +360,10 @@
             color: #ec4899;
             font-size: 0.85em;
             font-weight: 700;
-            text-shadow: none;
         }
         
-        @media (max-width: 480px) {
-            .hashtag {
-                font-size: 0.8em;
-                margin-top: 10px;
-            }
-        }
-        
-        body.night .hashtag {
-            color: #a78bfa;
-        }
-        
-        body.rainy .hashtag {
-            color: #60a5fa;
-        }
+        body.night .hashtag { color: #a78bfa; }
+        body.rainy .hashtag { color: #60a5fa; }
         
         .navigation {
             display: flex;
@@ -522,13 +373,6 @@
             flex-wrap: wrap;
         }
         
-        @media (max-width: 480px) {
-            .navigation {
-                gap: 6px;
-                margin-top: 12px;
-            }
-        }
-        
         .nav-btn {
             background: linear-gradient(135deg, rgba(167, 139, 250, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%);
             color: white;
@@ -536,43 +380,17 @@
             padding: 12px 18px;
             border-radius: 15px;
             font-size: 0.9em;
-            flex-shrink: 0;
-            min-height: 44px;
-            -webkit-tap-highlight-color: transparent;
             font-weight: 600;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
             box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-        }
-        
-        @media (max-width: 480px) {
-            .nav-btn {
-                padding: 10px 14px;
-                font-size: 0.85em;
-                flex: 1 1 auto;
-                min-width: 80px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .nav-btn {
-                padding: 10px 12px;
-                font-size: 0.8em;
-            }
-        }
-        
-        .nav-btn:active {
-            transform: scale(0.95);
         }
         
         .nav-btn:hover:not(:disabled) {
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(167, 139, 250, 0.6) 100%);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
         }
         
         .nav-btn:disabled {
             opacity: 0.4;
             background: linear-gradient(135deg, rgba(148, 163, 184, 0.5) 0%, rgba(100, 116, 139, 0.5) 100%);
-            border-color: rgba(148, 163, 184, 0.6);
         }
         
         .birthday-special {
@@ -582,7 +400,6 @@
             margin-bottom: 20px;
             text-align: center;
             animation: pulse 2s ease-in-out infinite;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
         }
         
         @keyframes pulse {
@@ -590,17 +407,8 @@
             50% { transform: scale(1.02); }
         }
         
-        .birthday-emoji {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-        
-        .birthday-text {
-            color: white;
-            font-size: 1.3em;
-            font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
+        .birthday-emoji { font-size: 3em; margin-bottom: 10px; }
+        .birthday-text { color: white; font-size: 1.3em; font-weight: 700; }
         
         .confetti {
             position: fixed;
@@ -611,27 +419,13 @@
         }
         
         @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
         
         .locked-message {
             color: #666;
             font-style: italic;
-        }
-        
-        body.night .locked-message {
-            color: #999;
-        }
-        
-        body.rainy .locked-message {
-            color: #aaa;
         }
         
         .reflection-box {
@@ -658,19 +452,11 @@
             color: #2d2d2d;
             font-size: 0.9em;
             margin-bottom: 10px;
-            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.7);
             font-weight: 600;
         }
         
-        body.night .reflection-box label {
-            color: #FFA07A;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
-        }
-        
-        body.rainy .reflection-box label {
-            color: #B8E1FF;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
-        }
+        body.night .reflection-box label { color: #FFA07A; }
+        body.rainy .reflection-box label { color: #B8E1FF; }
         
         .reflection-box textarea {
             width: 100%;
@@ -689,6 +475,288 @@
             border-color: rgba(255, 255, 255, 0.6);
             background: white;
         }
+        
+        /* Bloc de Notas */
+        .notes-container {
+            background: rgba(255, 255, 255, 0.85);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 20px;
+            margin-top: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        body.night .notes-container {
+            background: rgba(44, 62, 80, 0.75);
+            border: 3px solid rgba(52, 73, 94, 0.9);
+        }
+        
+        body.rainy .notes-container {
+            background: rgba(71, 85, 105, 0.75);
+            border: 3px solid rgba(100, 116, 139, 0.9);
+        }
+        
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        body.night .notes-header { border-bottom-color: rgba(255, 255, 255, 0.2); }
+        body.rainy .notes-header { border-bottom-color: rgba(255, 255, 255, 0.2); }
+        
+        .notes-header h3 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        body.night .notes-header h3 { color: #fbbf24; }
+        body.rainy .notes-header h3 { color: #93c5fd; }
+        
+        .add-note-btn {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+        
+        .add-note-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+        
+        .notes-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .notes-list::-webkit-scrollbar { width: 6px; }
+        .notes-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+        .notes-list::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.5); border-radius: 10px; }
+        
+        .empty-notes {
+            text-align: center;
+            color: #94a3b8;
+            font-style: italic;
+            padding: 30px 10px;
+            font-size: 0.9em;
+        }
+        
+        body.night .empty-notes { color: #cbd5e1; }
+        body.rainy .empty-notes { color: #cbd5e1; }
+        
+        .note-item {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        body.night .note-item {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+        
+        body.rainy .note-item {
+            background: rgba(51, 65, 85, 0.6);
+            border-color: rgba(147, 197, 253, 0.4);
+        }
+        
+        .note-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        
+        .note-title-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #2d3748;
+            transition: all 0.3s ease;
+        }
+        
+        body.night .note-title-input {
+            background: rgba(30, 41, 59, 0.8);
+            color: #e0e7ff;
+        }
+        
+        body.rainy .note-title-input {
+            background: rgba(51, 65, 85, 0.8);
+            color: #dbeafe;
+        }
+        
+        .note-title-input:focus {
+            outline: none;
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+        
+        .note-actions { display: flex; gap: 5px; }
+        
+        .note-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .note-btn:hover {
+            transform: scale(1.1);
+            background: rgba(239, 68, 68, 0.4);
+        }
+        
+        .note-content {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            resize: vertical;
+            min-height: 80px;
+            color: #1f2937;
+            font-family: inherit;
+        }
+        
+        body.night .note-content {
+            background: rgba(30, 41, 59, 0.7);
+            color: #e0e7ff;
+        }
+        
+        body.rainy .note-content {
+            background: rgba(51, 65, 85, 0.7);
+            color: #dbeafe;
+        }
+        
+        .note-content:focus { outline: none; border-color: rgba(139, 92, 246, 0.5); }
+        
+        .subnotes-container {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(167, 139, 250, 0.3);
+        }
+        
+        .subnote-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+        }
+        
+        body.night .subnote-item { background: rgba(30, 41, 59, 0.4); }
+        body.rainy .subnote-item { background: rgba(51, 65, 85, 0.4); }
+        
+        .subnote-checkbox {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        
+        .subnote-text {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: #374151;
+        }
+        
+        body.night .subnote-text {
+            background: rgba(30, 41, 59, 0.8);
+            color: #cbd5e1;
+        }
+        
+        body.rainy .subnote-text {
+            background: rgba(51, 65, 85, 0.8);
+            color: #cbd5e1;
+        }
+        
+        .subnote-text.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        
+        .subnote-text:focus { outline: none; border-color: rgba(139, 92, 246, 0.5); }
+        
+        .subnote-delete {
+            background: rgba(239, 68, 68, 0.2);
+            border: none;
+            color: #ef4444;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .subnote-delete:hover {
+            background: rgba(239, 68, 68, 0.4);
+            transform: scale(1.1);
+        }
+        
+        .add-subnote-btn {
+            width: 100%;
+            background: rgba(167, 139, 250, 0.2);
+            border: 1px dashed rgba(167, 139, 250, 0.4);
+            color: #8b5cf6;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        body.night .add-subnote-btn {
+            background: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
+        }
+        
+        body.rainy .add-subnote-btn {
+            background: rgba(147, 197, 253, 0.15);
+            color: #60a5fa;
+        }
+        
+        .add-subnote-btn:hover { background: rgba(167, 139, 250, 0.3); }
     </style>
 </head>
 <body class="sunny">
@@ -732,6 +800,16 @@
                 <textarea id="reflectionText" placeholder="Escribe aquí..."></textarea>
             </div>
             
+            <div class="notes-container">
+                <div class="notes-header">
+                    <h3>📝 Mis Notas</h3>
+                    <button class="add-note-btn" onclick="addNewNote()">+ Nueva</button>
+                </div>
+                <div class="notes-list" id="notesList">
+                    <div class="empty-notes">No hay notas para este día. ¡Crea una nueva! 📝</div>
+                </div>
+            </div>
+            
             <div class="navigation">
                 <button class="nav-btn" onclick="previousDay()">← Anterior</button>
                 <button class="nav-btn" onclick="showToday()">📅 Hoy</button>
@@ -745,16 +823,14 @@
     </div>
 
     <script>
-        // API KEY DE OPENWEATHER
         const WEATHER_API_KEY = '6f66e2afe270d596638eba65b13ceafe';
         
         let currentDate = new Date();
         let userData = null;
         let reflections = {};
         let currentWeather = 'sunny';
-        let notes = {}; // Estructura: { 'dateKey': [{ id, title, content, subnotes: [{id, text, completed}] }] }
+        let notes = {};
         
-        // Cargar datos guardados al iniciar
         function loadSavedData() {
             const savedUser = localStorage.getItem('365luz_user');
             const savedReflections = localStorage.getItem('365luz_reflections');
@@ -762,10 +838,7 @@
             
             if (savedUser) {
                 userData = JSON.parse(savedUser);
-                // Convertir la fecha guardada de string a objeto Date
                 userData.birthday = new Date(userData.birthday);
-                
-                // Mostrar pantalla principal automáticamente
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('widgetScreen').classList.remove('hidden');
                 detectWeather();
@@ -781,22 +854,18 @@
             }
         }
         
-        // Guardar datos del usuario
         function saveUserData() {
             localStorage.setItem('365luz_user', JSON.stringify(userData));
         }
         
-        // Guardar reflexiones
         function saveReflections() {
             localStorage.setItem('365luz_reflections', JSON.stringify(reflections));
         }
         
-        // Guardar notas
         function saveNotes() {
             localStorage.setItem('365luz_notes', JSON.stringify(notes));
         }
         
-        // Cerrar sesión (por si quiere cambiar de usuario)
         function logout() {
             if (confirm('¿Seguro que quieres cerrar sesión?')) {
                 localStorage.removeItem('365luz_user');
@@ -812,7 +881,6 @@
             }
         }
         
-        // Sistema de Notas
         function getCurrentDateKey() {
             return new Date(currentDate).toDateString();
         }
@@ -962,7 +1030,7 @@
             `).join('');
         }
         
-        const phrases = "Tu sonrisa tiene poder, úsala hoy.|😊|No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖|Eres suficiente, incluso en tus días más simples.|✨|Hoy es un buen día para empezar de nuevo.|🌅|Cada paso pequeño cuenta, no lo olvides.|👣|La calma también es progreso.|🌊|Tienes un brillo que nadie puede copiar.|⭐|Lo que haces con amor siempre deja huella.|💝|Respira, vas bien.|🌬️|No corras, las flores no florecen de prisa.|🌸|Mereces todo lo bonito que estás buscando.|🌺|Lo que das, vuelve.|🔄|Eres más fuerte de lo que piensas.|💪|Tu energía cambia los lugares donde vas.|✨|Hoy elige verte con cariño.|💕|Lo estás intentando, y eso ya vale mucho.|🌟|No necesitas validación para ser valiosa.|👑|A veces descansar también es avanzar.|🛏️|Cada día puedes reinventarte un poco.|🦋|Eres luz, aunque no todos lo noten.|💡|Tu historia es única.|📖|Los días buenos llegan.|⏳|Agradece lo que tienes.|🙏|Elige la paz.|☮️|Tu voz importa.|🗣️|Has superado tanto.|🏔️|Lo mejor está por venir.|🎁|Sé tú misma.|🌈|El alma necesita descanso.|🌬️|Las cosas buenas toman tiempo.|⏰|Tu presencia es un regalo.|🎀|Sé amable contigo.|💗|No te castigues por sentir.|💙|Hoy puede enseñarte.|📚|Sigue adelante.|🐢|Los errores te fortalecen.|💎|No apagues tu luz.|💫|Tienes tanto por dar.|🎁|No necesitas claridad total.|🧭|Disfruta sin culpa.|🌻|Tu corazón sabe.|❤️|Sonríe hoy.|😊|Puedes cambiar.|🔄|Has llegado lejos.|🗺️|Tu bondad es fuerza.|🌟|No todo debe tener sentido.|🌙|Hoy cuenta.|🍃|Haz espacio para el bien.|🏡|Lo simple es hermoso.|🌿|Confía en el proceso.|🔮|Descansa.|😴|Elige ver lo bueno.|👀|El sol tarda en salir.|🌅|Eres capaz.|💪|No hay prisa.|🌷|Cada día es nuevo.|🌄|Lo estás haciendo bien.|🌟|Ya vales.|👑|Respira profundo.|🌬️|La ternura es fortaleza.|🌸|Has crecido.|🌱|Agradece.|🙏|Descansa si te cansas.|😌|Eres parte de algo bonito.|🌺|Estás avanzando.|🚶|Tu cuidado cuenta.|💞|Empezar de cero es valiente.|🔥|Mereces calma.|🕊️|Corazón valiente.|💖|Date crédito.|🏆|No necesitas producir.|✨|Eres suficiente en silencio.|🤫|La esperanza llega.|🌤️|Elige tu ritmo.|🎵|La bondad vuelve.|🔄|Algunas cosas se sienten.|💫|El mundo te sostiene.|🌍|Las victorias pequeñas importan.|🎉|Puedes soñar.|🌠|Cree en ti.|⭐|Eres capaz.|💪|No te exijas tanto.|🌼|Agradece tus pasos.|👣|Estás aprendiendo.|📚|Disfruta lento.|🐌|No necesitas todas las respuestas.|❓|Ya eres hermosa.|🌹|Suelta el control.|🎈|Mereces lo bueno.|💝|Celebra tus avances.|🎊|El tiempo enseña.|⏳|Sonríe más.|😊|Eres un proceso.|🔧|Tu ternura cambia.|🌎|Nadie más es tú.|✨|Mereces amor.|❤️|Eres diferente y brillante.|💎|No todo se mide.|📊|Siente orgullo.|🦁|Estás creciendo.|🌳|La calma llega.|🌊|No apagues tu entusiasmo.|🔥|Tus pasos son valientes.|👣|Puedes empezar otra vez.|🌅|Eres parte de algo grande.|🌌|Necesitar tiempo está bien.|⏰|Cada día te acerca.|🦋|Tus sueños merecen espacio.|💭|Eres luz.|💡|No controles todo.|🎮|Descansa sin culpa.|🛌|Tu esfuerzo vale.|🏅|Sé paciente contigo.|⏳|El amor florece.|🌻|Eres valiente.|🦸|El rumbo importa.|🧭|Eres constante.|⛰️|Descansar es sabio.|😌|No necesitas validación.|💫|Tu paz vale más.|☮️|Aprendes a quererte.|💗|La magia está en lo pequeño.|✨|Agradece lo simple.|🍂|Eres resiliente.|💪|Mira al cielo.|☁️|Lo haces bien.|👍|La felicidad se cultiva.|🌱|Confía en la vida.|🌈|Eres luz siempre.|🌥️|Tu ternura es regalo.|🎁|Cada día cuenta.|📆|No siempre debes ser fuerte.|🛡️|El descanso es parte.|🚶|Eres importante.|⭐|Suelta el peso.|🎈|El amor vuelve.|💕|Aprendes a vivir.|🌟|Tu forma de amar importa.|💖|Cree en lo bueno.|🌠|Eres valiente.|🦁|Vas bien.|🚶|La esperanza encuentra camino.|🌅|No necesitas plan perfecto.|📝|Estás donde debes.|📍|La vida es intentarlo.|🎯|No juzgues tus pausas.|⏸️|Tu corazón late.|💓|Elige calma.|🕊️|Hoy te fortalece.|💪|El cambio llega.|🌱|Comparte amor contigo.|💝|Estás floreciendo.|🌺|Confía en tu camino.|🛤️|Tu existencia es suficiente.|✨|Sé auténtica.|🌟|Eres historia hermosa.|📖|Simplemente sigue.|➡️|Abrázate con paciencia.|🤗|Lo haces bien.|👀|Cada día renace.|🌄|Eres capaz siempre.|💪|Sonríe.|😊|Cuida tu energía.|⚡|La bondad deja huella.|👣|Eres inspiración.|💫|Hoy siembras mañana.|🌷|Aprende a brillar.|✨|No subestimes tu crecimiento.|📈|Respira y sigue.|🌬️|Eres fuerte.|💪|El universo te recuerda.|🌌|Lo logras poco a poco.|🎯|Elige paz.|🔇|Eres increíble.|🌟|Todo tiene momento.|⏰|No te castigues.|🩹|Eres arte.|🎨|Déjate sorprender.|🎁|Eres luminosa.|✨|No pierdas la fe.|💭|Tu luz guía.|🔦|Haz algo bueno.|💚|Eres valiosa.|💎|Hoy te transforma.|🦋|Mereces suavidad.|☁️|Deja respirar tu alma.|🌬️|Eres suficiente.|✨|Ya tienes lo esencial.|💝|Date tiempo.|⏳|Te quieres con calma.|💗|La ternura es fuerza.|🌸|Tu ritmo es perfecto.|🎵|Eres luz siempre.|💡|Agradece lo que tienes.|🙏|Tu esencia es hermosa.|🌹|Lo haces lo mejor.|👏|Respira y confía.|🌬️|Eres milagro.|✨|Los sueños son reales.|🌠|Creces en silencio.|🌱|Elige ver bonito.|👁️|Tu paz es prioridad.|☮️|Disfruta el presente.|🎁|Alma fuerte y sensible.|💖|Da un paso más.|👣|Tu camino tiene sentido.|🛤️|Eres inspiración.|💫|Confía en tus decisiones.|✔️|Aprende a soltar.|🎈|Eres suficiente.|⭐|Celebra tu historia.|🎉|Descubre más.|🔍|Crea belleza.|🎨|Abraza emociones.|🤗|Estás sanando.|🩹|Tu esfuerzo se ve.|👀|Cree más en ti.|💪|Eres amor.|❤️|Lo bueno no duele.|🌈|Deja fluir.|🌊|Puedes lograrlo.|🏆|Eres única.|💎|Respira sin prisa.|🌬️|Eres bonita.|🌺|Todo mejora.|📈|Tu luz no depende del clima.|☀️|Aprendes a cuidarte.|💚|Date un momento.|🧘|Eres suficiente en pausa.|⏸️|No todo es perfecto.|🌸|Agradece avances.|📊|Eres fuerza en calma.|🌊|Elige amor.|💕|Creces con intentos.|🌱|Tu ternura cambia días.|🌼|Sonríe sin razón.|😊|Eres resiliente.|💪|Recuerda lo lejos.|🗺️|Déjate abrazar.|🤗|Vale la pena.|✨|Confía en el proceso.|🔄|Estás brillando.|💫|Eres amor en movimiento.|❤️|Date crédito.|🏅|Eres más que suficiente.|👑|Encuentra belleza simple.|🍃|Lo haces genial.|🌟|Eres esperanza.|🌅|Suelta culpa.|🎈|Eres paz.|☮️|Abrázate con cariño.|🤗|Eres parte grande.|🌌|Confía sin dudar.|💪|Tu alma merece descanso.|😴|Ve el lado bueno.|😊|Eres el sol.|☀️|No te exijas.|🌸|Eres hermosa siempre.|🌹|Siente sin miedo.|💙|Eres más capaz.|💪|Respira y suelta.|🌬️|Tu historia se construye.|🏗️|Agradece existir.|🙏|Eres amor.|❤️|Vales mucho.|💎|Aprendes a florecer.|🌺|Confía en fuerza.|💪|Corazón valiente.|🦁|Descansa sin culpa.|😌|Logras cosas grandes.|🏆|Busca calma dentro.|🧘|Eres luz llena.|✨|Sonríe a la vida.|😊|Haces lo correcto.|✔️|Cree en finales felices.|🌈|Eres luz para todos.|💡|Elige ternura.|💗|Eres suficiente siempre.|⭐|Aprecia lo que tienes.|🙏|Eres fuerza y dulzura.|🌸|Deja que esperanza guíe.|🌟|Eres buen recuerdo.|📸|Sé paciente.|⏳|Eres valiente aquí.|💪|Confía intuición.|🔮|Mereces amor verdadero.|💖|Agradece camino.|🛤️|Eres inspiración silenciosa.|🌙|Da paso con fe.|👣|Eres parte hermosa.|🌺|Puedes empezar otra vez.|🌅|Eres magia.|✨|Suelta lo viejo.|🎈|Eres alegría.|😊|Celebra existencia.|🎉|Eres constancia.|🌊|Todo pasa.|⏰|Eres más que errores.|⭐|Vive con gratitud.|🙏|Eres luz creyendo.|💡|Descansa.|🛌|Eres importante para alguien.|💝|Suelta miedo.|🎈|Eres historia evolutiva.|📖|Confía milagros.|✨|Eres suficiente sin condiciones.|💖|Cree posibilidades.|🌟|Eres parte buena.|🌈|Abraza lo que eres.|🤗|Eres fuerte que dudas.|💪|Elige amor todo.|❤️|Eres chispa esperanza.|✨|Disfruta lo haces.|😊|Eres capaz soñar.|🌠|Sé amable contigo.|💗|Eres luz tormenta.|⛈️|Agradece aprendido.|📚|Eres alma hermosa.|💫|Confía futuro.|🔮|Eres faro demás.|🗼|Respira sigue.|🌬️|Eres amor calma fuerza.|💪|No olvides sonreír.|😊|Eres resiliencia.|📖|Todo se acomoda.|🧩|Eres hermosa eres.|🌹|Ve bueno en ti.|👁️|Eres prueba luz vuelve.|🌅|Suelta pesa.|🎈|Eres sentido.|🌟|Celebra victorias.|🎊|Eres expansión.|🌌|Elige cuidarte.|💚|Eres todo necesitas.|✨|Mereces cosas buenas.|🎁|Eres fuerte miedos.|💪|Agradece presente.|🎁|Eres corazón amor.|❤️|Descansa sin remordimientos.|😴|Eres única especial.|💎|Sigue creyendo.|⭐|Eres calma buscas.|🌊|Confía tiempo.|⏰|Puedes volver empezar.|🌅|Deja vida fluir.|🌊|Eres digna amor.|💖|Agradece fuiste eres.|🙏|Eres promesa cumplida.|✅|Confía poder simple.|🍃|Eres abrazo mundo.|🤗|Deja espacio esperanza.|🌟|Eres recordatorio bondad.|💝|Vive ligereza.|🎈|Eres todo necesitas.|✨|Elige paz.|☮️|Eres valiente crees.|🦁|Confía proceso.|🔄|Eres amor humano.|💗|Sonríe lejos llegaste.|😊|Eres historia orgullo.|📖|Agradece por ti.|🙏|Eres prueba puede.|🏆|Todo saldrá bien.|🌈|Eres suficiente siempre serás.|⭐";
+        const phrases = "Tu sonrisa tiene poder, úsala hoy.|😊|No necesitas hacerlo perfecto, solo hacerlo con el corazón.|💖|Eres suficiente, incluso en tus días más simples.|✨|Hoy es un buen día para empezar de nuevo.|🌅|Cada paso pequeño cuenta, no lo olvides.|👣|La calma también es progreso.|🌊|Tienes un brillo que nadie puede copiar.|⭐|Lo que haces con amor siempre deja huella.|💝|Respira, vas bien.|🌬️|No corras, las flores no florecen de prisa.|🌸";
         
         const messages = phrases.split('|').reduce((acc, item, index, arr) => {
             if (index % 2 === 0 && arr[index + 1]) {
@@ -971,81 +1039,47 @@
             return acc;
         }, []);
 
-        const hashtags = ["#EresLuz", "#DíaBrillante", "#MotivoDeAlegría", "#TuEsencia", "#EnergíaPositiva", "#ValorInterior", "#BrillaPorTi", "#TúImportas", "#AmorPropio", "#FuerzaInterior", "#CadaDíaCuenta", "#TúBrillas", "#AlmaHermosa", "#TuPresencia", "#EresMagia", "#TuVoz", "#CorazónValiente", "#EsenciaÚnica", "#TuSonrisa", "#GraciasPorSer"];
+        const hashtags = ["#EresLuz", "#DíaBrillante", "#MotivoDeAlegría", "#TuEsencia", "#EnergíaPositiva"];
 
-        // Detectar clima según la hora y API
         async function detectWeather() {
             const hour = new Date().getHours();
             
-            console.log('🕐 Hora actual:', hour);
-            
-            // Modo nocturno automático (8pm - 6am)
             if (hour >= 20 || hour < 6) {
-                console.log('🌙 Aplicando modo nocturno');
                 applyWeatherTheme('night');
                 return;
             }
             
-            // Durante el día, verificar clima con API
             if (WEATHER_API_KEY && WEATHER_API_KEY !== '6f66e2afe270d596638eba65b13ceafe') {
-                console.log('🔑 API Key configurada, obteniendo clima real...');
                 try {
-                    // Coordenadas de Belén, Heredia, Costa Rica
                     const latitude = 9.9881;
                     const longitude = -84.1811;
-                    
-                    console.log('📍 Usando ubicación: Belén, Heredia, Costa Rica');
                     
                     const response = await fetch(
                         `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
                     );
                     
-                    if (!response.ok) {
-                        console.log('❌ Error en respuesta de API:', response.status);
-                        throw new Error('API request failed');
-                    }
+                    if (!response.ok) throw new Error('API request failed');
                     
                     const data = await response.json();
-                    console.log('🌤️ Datos del clima:', data);
-                    console.log('🌡️ Temperatura:', Math.round(data.main.temp - 273.15) + '°C');
-                    console.log('💧 Humedad:', data.main.humidity + '%');
-                    console.log('🌦️ Descripción:', data.weather[0].description);
-                    
                     const weatherCode = data.weather[0].id;
-                    const weatherMain = data.weather[0].main.toLowerCase();
-                    console.log('🔢 Código de clima:', weatherCode, '- Tipo:', weatherMain);
                     
-                    // Detectar lluvia (códigos 200-599: tormenta, llovizna, lluvia)
                     if (weatherCode >= 200 && weatherCode < 600) {
-                        console.log('🌧️ Detectada LLUVIA, aplicando modo lluvia');
                         applyWeatherTheme('rainy');
                         return;
                     }
                     
-                    console.log('☀️ Clima despejado, aplicando modo soleado');
                     applyWeatherTheme('sunny');
                     return;
                     
                 } catch (error) {
-                    console.log('⚠️ Error al obtener clima:', error.message);
-                    console.log('☀️ Usando modo soleado por defecto');
+                    console.log('Error al obtener clima:', error.message);
                 }
-            } else {
-                console.log('ℹ️ No hay API Key configurada');
             }
             
-            // Por defecto durante el día: soleado
-            console.log('☀️ Aplicando modo soleado (default)');
             applyWeatherTheme('sunny');
         }
         
-        function getCurrentPosition() {
-            // Ya no se usa, pero se mantiene por compatibilidad
-            return Promise.reject(new Error('Geolocalización no necesaria'));
-        }
-        
         function applyWeatherTheme(weather) {
-            console.log('🎨 Aplicando tema:', weather);
             currentWeather = weather;
             document.body.className = weather;
             
@@ -1066,8 +1100,6 @@
                 createLightning(effectsContainer);
                 createClouds(effectsContainer, 5, true);
             }
-            
-            console.log('✅ Tema aplicado correctamente:', weather);
         }
         
         function createSun(container) {
@@ -1107,8 +1139,6 @@
                 cloud.style.animationDelay = Math.random() * 20 + 's';
                 if (dark) {
                     cloud.style.background = 'rgba(100, 100, 120, 0.6)';
-                    if (cloud.querySelector('::before')) cloud.querySelector('::before').style.background = 'rgba(100, 100, 120, 0.6)';
-                    if (cloud.querySelector('::after')) cloud.querySelector('::after').style.background = 'rgba(100, 100, 120, 0.6)';
                 }
                 container.appendChild(cloud);
             }
@@ -1170,7 +1200,7 @@
             const birthday = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 12, 0, 0);
             
             userData = {name, birthday};
-            saveUserData(); // Guardar en localStorage
+            saveUserData();
             
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('widgetScreen').classList.remove('hidden');
@@ -1185,7 +1215,7 @@
             selected.setHours(0,0,0,0);
             
             const dayOfYear = getDayOfYear(currentDate);
-            const message = messages[dayOfYear - 1] || messages[0];
+            const message = messages[dayOfYear % messages.length];
             
             document.getElementById('dayNumber').textContent = `Día ${dayOfYear}`;
             document.getElementById('dateDisplay').textContent = currentDate.toLocaleDateString('es-ES', {
@@ -1195,7 +1225,6 @@
                 year: 'numeric'
             });
             
-            // Icono según clima
             if (currentWeather === 'sunny') {
                 document.getElementById('weatherIcon').textContent = '☀️';
             } else if (currentWeather === 'night') {
@@ -1237,22 +1266,13 @@
                 document.getElementById('nextBtn').disabled = tomorrow > today;
             }
             
-            // Renderizar notas del día actual
             renderNotes();
-
-            // Mostrar/ocultar navegación según cumpleaños
-            const navigationDiv = document.querySelector('.navigation');
-            if (userData && isBirthday(selected, userData.birthday)) {
-                navigationDiv.style.display = 'flex';
-            } else {
-                navigationDiv.style.display = 'flex';
-            }
         }
         
         document.getElementById('reflectionText').addEventListener('input', function() {
             const dateKey = new Date(currentDate).toDateString();
             reflections[dateKey] = this.value;
-            saveReflections(); // Guardar automáticamente
+            saveReflections();
         });
         
         function showToday() {
@@ -1271,22 +1291,12 @@
             updateDisplay();
         }
         
-        // Detectar clima cada 10 minutos
         setInterval(detectWeather, 600000);
         
-        // Cargar datos guardados al iniciar
         loadSavedData();
         
-        // Si no hay usuario guardado, aplicar tema inicial
         if (!userData) {
             detectWeather();
-        }
-        
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .catch(err => console.log('Service Worker no disponible'));
-            });
         }
     </script>
 </body>
