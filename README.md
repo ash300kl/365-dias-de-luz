@@ -9,12 +9,6 @@
 
 🔗 **[Ver demo en vivo](https://ash300kl.github.io/365-dias-de-luz/)** · *Recomendado abrir desde el celular*
 
-<p align="center">
-  <img src="docs/captura-1.png" width="250" alt="Vista mensual">
-  <img src="docs/captura-2.png" width="250" alt="Personalización">
-  <img src="docs/captura-3.png" width="250" alt="Herramientas">
-</p>
-
 ---
 
 ## 💡 La idea
